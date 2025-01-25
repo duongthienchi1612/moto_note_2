@@ -1,25 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'accessory_entity.dart';
+part of 'accessory_type_entity.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-AccessoryEntity _$AccessoryEntityFromJson(Map<String, dynamic> json) =>
-    AccessoryEntity(
+AccessoryTypeEntity _$AccessoryTypeEntityFromJson(Map<String, dynamic> json) =>
+    AccessoryTypeEntity(
       id: (json['id'] as num?)?.toInt(),
       nameVi: json['name_vi'] as String?,
       nameEn: json['name_en'] as String?,
-      imagePath: json['image_path'] as String?,
-      type: (json['type'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$AccessoryEntityToJson(AccessoryEntity instance) =>
+Map<String, dynamic> _$AccessoryTypeEntityToJson(
+        AccessoryTypeEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name_vi': instance.nameVi,
       'name_en': instance.nameEn,
-      'image_path': instance.imagePath,
-      'type': instance.type,
     };

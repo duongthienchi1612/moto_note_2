@@ -21,11 +21,15 @@ class AccessoryEntity extends CoreReadEntity {
   @JsonKey(name: 'image_path')
   final String? imagePath;
 
+  @JsonKey(name: 'type')
+  final int? type;
+
   AccessoryEntity({
     this.id,
     this.nameVi,
     this.nameEn,
     this.imagePath,
+    this.type
   });
 
   @override

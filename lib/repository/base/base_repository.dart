@@ -61,7 +61,7 @@ abstract class BaseReadRepository<T extends CoreReadEntity> implements IBaseRead
         Map<String, dynamic>,
       ) mapper,
       [final List<String> args = const <String>[]]) async {
-    final database = await dbFactory.getMasterData();
+    final database = await dbFactory.getMasterDatabase();
     final list = await database.list(query, args);
     return list.map((f) => mapper(f)).toList();
   }

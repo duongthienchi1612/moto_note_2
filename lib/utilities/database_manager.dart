@@ -14,6 +14,18 @@ class DatabaseManager {
     await database.close();
   }
 
+  Future<int> getVersion() async {
+    return database.getVersion();
+  }
+
+  Future setVersion(int version) async {
+    await database.setVersion(version);
+  }
+
+  Future exec(String sql) async {
+    await database.execute(sql);
+  }
+
   Future<List<Map<String, dynamic>>> list(String query, [final List<String> args = const <String>[]]) async {
     final queryResult = await database.rawQuery(query, args);
     return queryResult.toList();

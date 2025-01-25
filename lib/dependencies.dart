@@ -7,6 +7,7 @@ import 'preference/user_reference.dart';
 import 'repository/repository_dependencies.dart';
 import 'screen/screen_dependencies.dart';
 
+import 'utilities/app_configuration.dart';
 import 'utilities/database_factory.dart';
 import 'utilities/file_utility.dart';
 
@@ -14,9 +15,10 @@ final injector = GetIt.instance;
 
 class AppDependencies {
   static Future<void> initialize() async {
+    injector.registerLazySingleton<AppConfiguration>(() => AppConfiguration());
     injector.registerLazySingleton<DatabaseFactory>(() => DatabaseFactory());
     injector.registerLazySingleton<UserReference>(() => UserReference());
-    
+
     ModelDependencies.init(injector);
     RepositoryDependencies.init(injector);
     BusinessDependencies.init(injector);

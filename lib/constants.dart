@@ -1,5 +1,8 @@
 class Database {
   static const accessories = 'accessories';
+  static const accessoriesType = 'accessories_type';
+  static const devices = 'devices';
+  static const sqlSemiColonEncode = "\\003B";
 }
 
 class PreferenceKey {
