@@ -1,8 +1,11 @@
 {
-  "appTitle": "Sorting Quiz",
-  "startQuiz": "Start Quiz",
-  "discoveryYourHouse": "Discovery Your House",
-  "retakeQuizTitle": "Take another quiz",
-  "yes": "Yes",
-  "no": "No"
+  "appName": "Moto Note",
+  "addDeviceFormTitle": "Add Device",
+  "deviceName": "Device Name",
+  "deviceType": "Device Type",
+  "lastReplacement": "Last Replacement",
+  "nextReplacement": "Next Replacement",
+  "date": "Date",
+  "notes": "Additional Notes",
+  "save": "Save Device"
 }

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 class AppConfiguration {
-  Future<bool> init(bool force) async {
+  Future<bool> init() async {
     final Map<String, dynamic> localConfig = jsonDecode(await _loadFromAssetConfig('assets/cfg/app_settings.json'));
     GlobalConfiguration().loadFromMap(localConfig);
     return true;

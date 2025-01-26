@@ -7,6 +7,7 @@ import 'business/master_data_business.dart';
 import 'constants.dart';
 import 'dependencies.dart';
 import 'preference/user_reference.dart';
+import 'utilities/app_configuration.dart';
 import 'utilities/database_factory.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -40,11 +41,16 @@ class _SplashScreenState extends State<SplashScreen> {
     await AppDependencies.initialize();
     final isAllGranted = await _requestPermissions();
     if (isAllGranted) {
+
+      final appConfig = injector.get<AppConfiguration>();
+      await appConfig.init();
+
       final databaseFactory = injector.get<DatabaseFactory>();
       await databaseFactory.initDatabase();
 
       final masterData = injector.get<MasterDataBusiness>();
       await masterData.init();
+
     } else {
       await openAppSettings();
       exit(0);

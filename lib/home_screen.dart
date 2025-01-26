@@ -6,6 +6,7 @@ import 'constants.dart';
 import 'dependencies.dart';
 import 'preference/user_reference.dart';
 import 'theme/app_colors.dart';
+import 'widget/add_device_form.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(String) changeLanguage;
@@ -68,12 +69,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       floatingActionButton: FloatingActionButton(
         mini: true,
         clipBehavior: Clip.hardEdge,
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (_) {
+                return AddDeviceForm();
+              });
+        },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add, size: 30),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // Bottom Navigation Bar
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         color: Colors.white,
