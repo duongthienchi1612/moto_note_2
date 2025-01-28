@@ -16,3 +16,7 @@ class ImagePath {
 class ScreenName {
   static const home = '/home';
 }
+
+class Constants {
+  static const borderRadius = 22.0;
+}

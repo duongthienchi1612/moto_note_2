@@ -8,6 +8,7 @@ final class AddDeviceInitial extends AddDeviceState {}
 final class AddDeviceLoading extends AddDeviceState {}
 
 final class AddDeviceLoaded extends AddDeviceState {
+  final AddItemModel model;
   final List<AccessoryTypeEntity> accessoriesType;
-  AddDeviceLoaded({required this.accessoriesType});
+  AddDeviceLoaded({required this.model, required this.accessoriesType});
 }

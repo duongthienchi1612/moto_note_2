@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/add_device_bloc/add_device_bloc.dart';
+import '../constants.dart';
 import '../dependencies.dart';
+import '../model/master_data/accessory_type_entity.dart';
 import '../theme/app_colors.dart';
+import 'custom_text_field.dart';
 
 class AddDeviceForm extends StatefulWidget {
   const AddDeviceForm({super.key});
@@ -28,7 +31,7 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
           builder: (context, state) {
             if (state is AddDeviceLoaded) {
               return Container(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: EdgeInsets.all(4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -40,205 +43,84 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                       ),
                     ),
                     Center(
-                      child: Text(
-                        localizations.addDeviceFormTitle,
-                        style: textTheme.headlineMedium,
-                      ),
+                      child: Text(localizations.addDeviceFormTitle, style: textTheme.headlineMedium),
                     ),
-                    SizedBox(
-                      height: 8,
-                    ),
+                    SizedBox(height: 8),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Device Name
-                            Text(
-                              localizations.deviceName,
-                              style: textTheme.titleLarge,
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            TextField(
-                              controller: TextEditingController(text: ''),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Device Name
+                              Text(
+                                localizations.deviceName,
+                                style: textTheme.titleLarge,
                               ),
-                              onChanged: (value) {},
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Text(
-                              localizations.deviceType,
-                              style: textTheme.titleLarge,
-                            ),
-                            ...state.accessoriesType
-                                .map((e) => TextButton(
-                                    onPressed: () {},
-                                    child: Container(
-                                      child: Text(e.nameVi!),
-                                    )))
-                                .toList(),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            // Last Replacement
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        localizations.lastReplacement,
-                                        style: textTheme.titleLarge,
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      TextField(
-                                        controller: TextEditingController(text: ''),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(22),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(22)),
-                                            borderSide: BorderSide(color: Colors.grey),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(22)),
-                                            borderSide: BorderSide(color: Colors.grey),
-                                          ),
-                                        ),
-                                        onChanged: (value) {},
-                                      ),
-                                    ],
+                              CustomTextField(
+                                data: state.model.deviceName,
+                                onChange: (name) {
+                                state.model.deviceName = name;
+                                bloc.add(OnChange(state.model));
+                              }),
+                              // Device Type
+                              Text(
+                                localizations.deviceType,
+                                style: textTheme.titleLarge,
+                              ),
+                              ListDeviceType(
+                                  accessoriesType: state.accessoriesType,
+                                  deviceTypeSelected: state.model.deviceTypeId,
+                                  onSelected: (id) {
+                                    state.model.deviceTypeId = id;
+                                    bloc.add(OnChange(state.model));
+                                  }),
+
+                              SizedBox(height: 16),
+                              // Last Replacement
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(localizations.lastReplacement, style: textTheme.titleLarge),
+                                        CustomTextField(onChange: (value) {}),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Flexible(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        localizations.date,
-                                        style: textTheme.titleLarge,
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      TextField(
-                                        controller: TextEditingController(text: ''),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(22),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(22)),
-                                            borderSide: BorderSide(color: Colors.grey),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(22)),
-                                            borderSide: BorderSide(color: Colors.grey),
-                                          ),
-                                        ),
-                                        onChanged: (value) {},
-                                      ),
-                                    ],
+                                  SizedBox(width: 8),
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(localizations.date, style: textTheme.titleLarge),
+                                        CustomTextField(onChange: (value) {}),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            // Next Replacement
-                            Text(
-                              localizations.nextReplacement,
-                              style: textTheme.titleLarge,
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            TextField(
-                              controller: TextEditingController(text: ''),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
+                                ],
                               ),
-                              onChanged: (value) {},
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            // Note
-                            Text(
-                              localizations.notes,
-                              style: textTheme.titleLarge,
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            TextField(
-                              controller: TextEditingController(text: ''),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(22),
+                              // Next Replacement
+                              Text(localizations.nextReplacement, style: textTheme.titleLarge),
+                              CustomTextField(onChange: (value) {}),
+                              // Note
+                              Text(localizations.notes, style: textTheme.titleLarge),
+                              CustomTextField(onChange: (value) {}),
+                              Container(
+                                width: double.infinity,
+                                color: Colors.blue,
+                                height: 40,
+                                child: TextButton(
+                                  onPressed: () {
+                                    bloc.onSave(state.model);
+                                  },
+                                  child: Text(localizations.save),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                              ),
-                              onChanged: (value) {},
-                            ),
-                            SizedBox(
-                              height: 24,
-                            ),
-                            Container(
-                              width: double.infinity,
-                              color: Colors.blue,
-                              height: 40,
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text(localizations.save),
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -249,6 +131,90 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
             return Container();
           },
         ),
+      ),
+    );
+  }
+}
+
+class ListDeviceType extends StatelessWidget {
+  final List<AccessoryTypeEntity> accessoriesType;
+  final int? deviceTypeSelected;
+  final Function(int) onSelected;
+  const ListDeviceType({required this.accessoriesType, this.deviceTypeSelected, required this.onSelected, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              ...accessoriesType
+                  .take(4)
+                  .map(
+                    (e) => AnimatedContainer(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      margin: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: deviceTypeSelected == e.id ? AppColors.devicesType[e.id]! : Colors.white,
+                        borderRadius: BorderRadius.circular(Constants.borderRadius),
+                        border: Border.all(
+                          color: deviceTypeSelected == e.id ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            foregroundColor: Colors.black,
+                            padding: EdgeInsets.symmetric(horizontal: 4),
+                            textStyle: deviceTypeSelected == e.id ? textTheme.titleLarge : textTheme.bodyLarge),
+                        onPressed: () => onSelected(e.id!),
+                        child: Text(e.nameVi!),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ],
+          ),
+          Row(
+            children: [
+              ...accessoriesType
+                  .skip(4)
+                  .map(
+                    (e) => AnimatedContainer(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      margin: EdgeInsets.only(right: 8),
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: deviceTypeSelected == e.id ? AppColors.devicesType[e.id]! : Colors.white,
+                        borderRadius: BorderRadius.circular(Constants.borderRadius),
+                        border: Border.all(
+                          color: deviceTypeSelected == e.id ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            foregroundColor: Colors.black,
+                            padding: EdgeInsets.symmetric(horizontal: 4),
+                            textStyle: deviceTypeSelected == e.id ? textTheme.titleLarge : textTheme.bodyLarge),
+                        onPressed: () => onSelected(e.id!),
+                        child: Text(e.nameVi!),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ],
+          ),
+        ],
       ),
     );
   }
