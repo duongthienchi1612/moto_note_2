@@ -19,3 +19,11 @@ class IBaseReadRepository<T extends CoreReadEntity> {
     return null;
   }
 }
+
+class IBaseRepository<T extends CoreEntity> {
+  Future insert(T? item) async {}
+
+  Future update(T? item) async {}
+
+  Future delete(T? item) async {}
+}

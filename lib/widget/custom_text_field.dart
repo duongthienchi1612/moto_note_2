@@ -1,11 +1,19 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:developer';
 
 import '../constants.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? data;
+  final bool ignorePointer;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? textInputType;
   final Function(String) onChange;
-  const CustomTextField({this.data,required this.onChange, super.key});
+
+  const CustomTextField({this.data, required this.onChange, this.ignorePointer = false, super.key, this.inputFormatters, this.textInputType});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -16,7 +24,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _controller = TextEditingController(text: widget.data ?? '');
   }
 
   @override
@@ -28,7 +36,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0,8,0,16),
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
       child: TextField(
         controller: _controller,
         decoration: InputDecoration(
@@ -45,8 +53,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
             borderSide: BorderSide(color: Colors.grey),
           ),
         ),
-        // onChanged: onChange,
-        onSubmitted: widget.onChange,
+        keyboardType: widget.textInputType,
+        inputFormatters: widget.inputFormatters,
+        ignorePointers: widget.ignorePointer,
+        onChanged: (value) {
+          widget.onChange(value);
+        },
+        onTapOutside: (event) => FocusScope.of(context).unfocus(),
       ),
     );
   }

@@ -19,4 +19,5 @@ class ScreenName {
 
 class Constants {
   static const borderRadius = 22.0;
+  static const rangeOfYear = 50;
 }

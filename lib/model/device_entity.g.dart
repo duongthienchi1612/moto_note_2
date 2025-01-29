@@ -8,28 +8,28 @@ part of 'device_entity.dart';
 
 DeviceEntity _$DeviceEntityFromJson(Map<String, dynamic> json) => DeviceEntity()
   ..id = json['id'] as String?
-  ..deviceName = json['deviceName'] as String?
-  ..deviceTypeId = (json['deviceTypeId'] as num?)?.toInt()
-  ..deviceTypeName = json['deviceTypeName'] as String?
-  ..lastReplacementKm = (json['lastReplacementKm'] as num?)?.toInt()
-  ..nextReplacementKm = (json['nextReplacementKm'] as num?)?.toInt()
-  ..lastReplacementDate = json['lastReplacementDate'] == null
+  ..deviceName = json['device_name'] as String?
+  ..deviceTypeId = (json['device_type_id'] as num?)?.toInt()
+  ..deviceTypeName = json['device_type_name'] as String?
+  ..lastReplacementKm = (json['last_replacement_km'] as num?)?.toInt()
+  ..nextReplacementKm = (json['next_replacement_km'] as num?)?.toInt()
+  ..lastReplacementDate = json['last_replacement_date'] == null
       ? null
-      : DateTime.parse(json['lastReplacementDate'] as String)
+      : DateTime.parse(json['last_replacement_date'] as String)
   ..note = json['note'] as String?
-  ..createAt = json['createAt'] == null
+  ..createAt = json['create_at'] == null
       ? null
-      : DateTime.parse(json['createAt'] as String);
+      : DateTime.parse(json['create_at'] as String);
 
 Map<String, dynamic> _$DeviceEntityToJson(DeviceEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'deviceName': instance.deviceName,
-      'deviceTypeId': instance.deviceTypeId,
-      'deviceTypeName': instance.deviceTypeName,
-      'lastReplacementKm': instance.lastReplacementKm,
-      'nextReplacementKm': instance.nextReplacementKm,
-      'lastReplacementDate': instance.lastReplacementDate?.toIso8601String(),
+      'device_name': instance.deviceName,
+      'device_type_id': instance.deviceTypeId,
+      'device_type_name': instance.deviceTypeName,
+      'last_replacement_km': instance.lastReplacementKm,
+      'next_replacement_km': instance.nextReplacementKm,
+      'last_replacement_date': instance.lastReplacementDate?.toIso8601String(),
       'note': instance.note,
-      'createAt': instance.createAt?.toIso8601String(),
+      'create_at': instance.createAt?.toIso8601String(),
     };

@@ -1,4 +1,5 @@
 import 'package:basic_utils/basic_utils.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../dependencies.dart';
 import '../../model/base/base_entity.dart';
@@ -64,5 +65,45 @@ abstract class BaseReadRepository<T extends CoreReadEntity> implements IBaseRead
     final database = await dbFactory.getMasterDatabase();
     final list = await database.list(query, args);
     return list.map((f) => mapper(f)).toList();
+  }
+}
+
+abstract class BaseRepository<T extends CoreEntity> extends BaseReadRepository<T> implements IBaseRepository<T> {
+  BaseRepository();
+
+  final Uuid uuid = const Uuid();
+
+  @override
+  Future insert(T? item) async {
+    if (item == null) {
+      return;
+    }
+    item.id = item.id ?? uuid.v4();
+    final database = await dbFactory.getUserDatabase();
+    await database.insert(item);
+  }
+
+  @override
+  Future update(T? item) async {
+    if (item == null) {
+      return;
+    }
+
+    final database = await dbFactory.getUserDatabase();
+    await database.update(item);
+  }
+
+  @override
+  Future delete(T? item) async {
+    if (item == null) {
+      return;
+    }
+    final database = await dbFactory.getUserDatabase();
+    await database.delete(item);
+  }
+
+  Future execute(String sql) async {
+    final database = await dbFactory.getUserDatabase();
+    await database.exec(sql);
   }
 }

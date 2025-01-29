@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import '../bloc/add_device_bloc/add_device_bloc.dart';
 import '../constants.dart';
 import '../dependencies.dart';
@@ -59,11 +62,11 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                 style: textTheme.titleLarge,
                               ),
                               CustomTextField(
-                                data: state.model.deviceName,
-                                onChange: (name) {
-                                state.model.deviceName = name;
-                                bloc.add(OnChange(state.model));
-                              }),
+                                  data: state.model.deviceName,
+                                  onChange: (name) {
+                                    state.model.deviceName = name;
+                                    bloc.add(OnChange(state.model));
+                                  }),
                               // Device Type
                               Text(
                                 localizations.deviceType,
@@ -81,22 +84,57 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                               // Last Replacement
                               Row(
                                 children: [
+                                  // Last Replacement Km
                                   Flexible(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(localizations.lastReplacement, style: textTheme.titleLarge),
-                                        CustomTextField(onChange: (value) {}),
+                                        CustomTextField(
+                                            data: state.model.lastReplacementKm != null
+                                                ? state.model.lastReplacementKm.toString()
+                                                : '',
+                                            textInputType: TextInputType.number,
+                                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                            onChange: (value) {
+                                              state.model.lastReplacementKm = int.tryParse(value);
+                                              bloc.add(OnChange(state.model));
+                                            }),
                                       ],
                                     ),
                                   ),
                                   SizedBox(width: 8),
+                                  // Last Replacement Date
                                   Flexible(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(localizations.date, style: textTheme.titleLarge),
-                                        CustomTextField(onChange: (value) {}),
+                                        Container(
+                                          padding: EdgeInsets.fromLTRB(0, 8, 0, 16),
+                                          child: OutlinedButton.icon(
+                                            onPressed: () async {
+                                              final value = await showDatePicker(
+                                                context: context,
+                                                firstDate: DateTime(DateTime.now().year - Constants.rangeOfYear),
+                                                lastDate: DateTime.now(),
+                                              );
+                                              state.model.lastReplacementDate = value;
+                                              bloc.add(OnChange(state.model));
+                                            },
+                                            style: OutlinedButton.styleFrom(
+                                              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                                            ),
+                                            icon: const Icon(Icons.calendar_month),
+                                            label: Center(
+                                              child: Text(
+                                                  state.model.lastReplacementDate != null
+                                                      ? DateFormat('dd-MM-yyyy').format(state.model.lastReplacementDate!)
+                                                      : '',
+                                                  style: textTheme.titleLarge),
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -104,17 +142,31 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                               ),
                               // Next Replacement
                               Text(localizations.nextReplacement, style: textTheme.titleLarge),
-                              CustomTextField(onChange: (value) {}),
+                              CustomTextField(
+                                data: state.model.nextReplacementKm != null ? state.model.nextReplacementKm.toString() : '',
+                                textInputType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                onChange: (value) {
+                                  state.model.nextReplacementKm = int.tryParse(value);
+                                  bloc.add(OnChange(state.model));
+                                },
+                              ),
                               // Note
                               Text(localizations.notes, style: textTheme.titleLarge),
-                              CustomTextField(onChange: (value) {}),
+                              CustomTextField(
+                                  data: state.model.note,
+                                  onChange: (value) {
+                                    state.model.note = value;
+                                    bloc.add(OnChange(state.model));
+                                  }),
                               Container(
                                 width: double.infinity,
                                 color: Colors.blue,
                                 height: 40,
                                 child: TextButton(
-                                  onPressed: () {
-                                    bloc.onSave(state.model);
+                                  onPressed: () async {
+                                    await bloc.onSave(state.model);
+                                    Navigator.pop(context);
                                   },
                                   child: Text(localizations.save),
                                 ),

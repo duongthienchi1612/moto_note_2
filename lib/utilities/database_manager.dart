@@ -1,5 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
+import '../model/base/base_entity.dart';
+
 class DatabaseManager {
   final String path;
   late Database database;
@@ -24,6 +26,30 @@ class DatabaseManager {
 
   Future exec(String sql) async {
     await database.execute(sql);
+  }
+
+  Future delete(CoreEntity item) async {
+    await database.delete(
+      item.table,
+      where: 'id = ?',
+      whereArgs: <String?>[item.id],
+    );
+  }
+
+  Future insert(CoreEntity item) async {
+    await database.insert(
+      item.table,
+      item.toJson(),
+    );
+  }
+
+  Future update(CoreEntity item) async {
+    await database.update(
+      item.table,
+      item.toJson(),
+      where: 'id = ?',
+      whereArgs: <String?>[item.id],
+    );
   }
 
   Future<List<Map<String, dynamic>>> list(String query, [final List<String> args = const <String>[]]) async {
