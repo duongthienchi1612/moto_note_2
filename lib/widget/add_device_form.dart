@@ -8,7 +8,9 @@ import '../constants.dart';
 import '../dependencies.dart';
 import '../model/master_data/accessory_type_entity.dart';
 import '../theme/app_colors.dart';
+import 'custom_input_field.dart';
 import 'custom_text_field.dart';
+import 'list_device_type.dart';
 
 class AddDeviceForm extends StatefulWidget {
   const AddDeviceForm({super.key});
@@ -60,10 +62,13 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Device Name
-                              _buildTextField(localizations.deviceName, state.model.deviceName, (name) {
-                                state.model.deviceName = name;
-                                bloc.add(OnChange(state.model));
-                              }),
+                              CustomInputField(
+                                  label: localizations.deviceName,
+                                  value: state.model.deviceName,
+                                  onChanged: (name) {
+                                    state.model.deviceName = name;
+                                    bloc.add(OnChange(state.model));
+                                  }),
                               // Device Type
                               Text(
                                 localizations.deviceType,
@@ -83,10 +88,10 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                 children: [
                                   // Last Replacement Km
                                   Expanded(
-                                    child: _buildTextField(
-                                      localizations.lastReplacement,
-                                      state.model.lastReplacementKm?.toString() ?? '',
-                                      (value) {
+                                    child: CustomInputField(
+                                      label: localizations.lastReplacement,
+                                      value: state.model.lastReplacementKm?.toString() ?? '',
+                                      onChanged: (value) {
                                         state.model.lastReplacementKm = int.tryParse(value);
                                         bloc.add(OnChange(state.model));
                                       },
@@ -109,10 +114,10 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                 ],
                               ),
                               // Next Replacement
-                              _buildTextField(
-                                localizations.nextReplacement,
-                                state.model.nextReplacementKm?.toString() ?? '',
-                                (value) {
+                              CustomInputField(
+                                label: localizations.nextReplacement,
+                                value: state.model.nextReplacementKm?.toString() ?? '',
+                                onChanged: (value) {
                                   state.model.nextReplacementKm = int.tryParse(value);
                                   bloc.add(OnChange(state.model));
                                 },
@@ -120,10 +125,10 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               ),
                               // Note
-                              _buildTextField(
-                                localizations.notes,
-                                state.model.note,
-                                (value) {
+                              CustomInputField(
+                                label: localizations.notes,
+                                value: state.model.note,
+                                onChanged: (value) {
                                   state.model.note = value;
                                   bloc.add(OnChange(state.model));
                                 },
@@ -159,23 +164,6 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
     );
   }
 
-  Widget _buildTextField(String label, String? value, Function(String) onChange,
-      {TextInputType? textInputType, List<TextInputFormatter>? inputFormatters}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: Theme.of(context).textTheme.titleLarge),
-        CustomTextField(
-          data: value,
-          textInputType: textInputType,
-          inputFormatters: inputFormatters,
-          onChange: onChange,
-        ),
-        const SizedBox(height: 8),
-      ],
-    );
-  }
-
   Widget _buildDatePicker(String label, DateTime? date, Function(DateTime?) onChange) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,90 +193,6 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ListDeviceType extends StatelessWidget {
-  final List<AccessoryTypeEntity> accessoriesType;
-  final int? deviceTypeSelected;
-  final Function(int) onSelected;
-  const ListDeviceType({required this.accessoriesType, this.deviceTypeSelected, required this.onSelected, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ...accessoriesType
-                  .take(4)
-                  .map(
-                    (e) => AnimatedContainer(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      margin: EdgeInsets.only(right: 8, bottom: 8),
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      decoration: BoxDecoration(
-                        color: deviceTypeSelected == e.id ? AppColors.devicesType[e.id]! : Colors.white,
-                        borderRadius: BorderRadius.circular(Constants.borderRadius),
-                        border: Border.all(
-                          color: deviceTypeSelected == e.id ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            textStyle: deviceTypeSelected == e.id ? textTheme.titleLarge : textTheme.bodyLarge),
-                        onPressed: () => onSelected(e.id!),
-                        child: Text(e.nameVi!),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ],
-          ),
-          Row(
-            children: [
-              ...accessoriesType
-                  .skip(4)
-                  .map(
-                    (e) => AnimatedContainer(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      margin: EdgeInsets.only(right: 8),
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      decoration: BoxDecoration(
-                        color: deviceTypeSelected == e.id ? AppColors.devicesType[e.id]! : Colors.white,
-                        borderRadius: BorderRadius.circular(Constants.borderRadius),
-                        border: Border.all(
-                          color: deviceTypeSelected == e.id ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            textStyle: deviceTypeSelected == e.id ? textTheme.titleLarge : textTheme.bodyLarge),
-                        onPressed: () => onSelected(e.id!),
-                        child: Text(e.nameVi!),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

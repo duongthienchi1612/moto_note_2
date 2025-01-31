@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  final bloc = injector.get<HomeBloc>();
   late AnimationController _controller;
 
   @override
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
           ),
           BlocProvider(
-            create: (context) => HomeBloc()..add(LoadData()),
+            create: (context) => bloc..add(LoadData()),
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
                 if (state is HomeLoaded) {
@@ -89,12 +90,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       floatingActionButton: FloatingActionButton(
         mini: true,
         clipBehavior: Clip.hardEdge,
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (_) {
-                return AddDeviceForm();
-              });
+        onPressed: () async {
+          await showDialog(
+            context: context,
+            builder: (_) {
+              return AddDeviceForm();
+            },
+          );
+          bloc.add(LoadData());
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add, size: 30),
