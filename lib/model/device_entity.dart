@@ -6,7 +6,7 @@ part 'device_entity.g.dart';
 @JsonSerializable()
 class DeviceEntity extends CoreEntity {
   @override
-  String get table => Database.devices;
+  String get table => DatabaseTable.devices;
 
   @JsonKey(name: 'device_name')
   String? deviceName;

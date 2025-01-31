@@ -23,7 +23,7 @@ class DatabaseFactory {
 
   Future<String> initLocalDatabase() async {
     final folderPath = await fileUtility.getCommonDatabaseFolder();
-    final dbPath = join(folderPath, 'master_data.db');
+    final dbPath = join(folderPath, DatabaseName.masterData);
     log(dbPath);
 
     final bool isExist = await File(dbPath).exists();
@@ -31,14 +31,14 @@ class DatabaseFactory {
       await File(dbPath).create(recursive: true);
     }
     // copy database from asset to local
-    final bytes = await rootBundle.load('assets/database/master_data.db');
+    final bytes = await rootBundle.load('assets/database/${DatabaseName.masterData}');
     await File(dbPath).writeAsBytes(bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return dbPath;
   }
 
   Future<DatabaseManager> getMasterDatabase() async {
     final folderPath = await fileUtility.getCommonDatabaseFolder();
-    final filePath = join(folderPath, 'master_data.db');
+    final filePath = join(folderPath, DatabaseName.masterData);
     final db = DatabaseManager(path: filePath);
     await db.open();
     return db;
@@ -46,7 +46,7 @@ class DatabaseFactory {
 
   Future<DatabaseManager> getUserDatabase() async {
     final folderPath = await fileUtility.getCommonDatabaseFolder();
-    final filePath = join(folderPath, 'moto_note.db');
+    final filePath = join(folderPath, DatabaseName.moteNote);
     final db = DatabaseManager(path: filePath);
     await db.open();
     final currentVersion = await db.getVersion();
@@ -65,6 +65,14 @@ class DatabaseFactory {
     return db;
   }
 
+  Future<DatabaseManager> getDatabase(String databaseName) async {
+    if (databaseName == DatabaseName.masterData) {
+      return getMasterDatabase();
+    } else {
+      return getUserDatabase();
+    }
+  }
+
   Future runScriptFile(DatabaseManager db, String path) async {
     final text = await rootBundle.loadString(path);
     final scriptLines = text.split(';');
@@ -72,7 +80,7 @@ class DatabaseFactory {
       for (var i = 0; i < scriptLines.length; i++) {
         var finalScript = scriptLines[i].trim();
         if (StringUtils.isNullOrEmpty(finalScript)) continue;
-        finalScript = finalScript.replaceAll(Database.sqlSemiColonEncode, ';');
+        finalScript = finalScript.replaceAll(DatabaseTable.sqlSemiColonEncode, ';');
         await db.exec(finalScript);
       }
     }

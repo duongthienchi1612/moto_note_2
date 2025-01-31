@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 import '../bloc/add_device_bloc/add_device_bloc.dart';
 import '../constants.dart';
 import '../dependencies.dart';
@@ -34,22 +33,26 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
           builder: (context, state) {
             if (state is AddDeviceLoaded) {
               return Container(
-                padding: EdgeInsets.all(4),
+                padding: EdgeInsets.all(8),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.close),
-                      ),
-                    ),
-                    Center(
-                      child: Text(localizations.addDeviceFormTitle, style: textTheme.headlineMedium),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Align(child: Text(localizations.addDeviceFormTitle, style: textTheme.headlineMedium)),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(Icons.close),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 8),
-                    Expanded(
+                    Flexible(
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -57,21 +60,16 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Device Name
-                              Text(
-                                localizations.deviceName,
-                                style: textTheme.titleLarge,
-                              ),
-                              CustomTextField(
-                                  data: state.model.deviceName,
-                                  onChange: (name) {
-                                    state.model.deviceName = name;
-                                    bloc.add(OnChange(state.model));
-                                  }),
+                              _buildTextField(localizations.deviceName, state.model.deviceName, (name) {
+                                state.model.deviceName = name;
+                                bloc.add(OnChange(state.model));
+                              }),
                               // Device Type
                               Text(
                                 localizations.deviceType,
                                 style: textTheme.titleLarge,
                               ),
+                              SizedBox(height: 8),
                               ListDeviceType(
                                   accessoriesType: state.accessoriesType,
                                   deviceTypeSelected: state.model.deviceTypeId,
@@ -79,96 +77,70 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                     state.model.deviceTypeId = id;
                                     bloc.add(OnChange(state.model));
                                   }),
-
                               SizedBox(height: 16),
                               // Last Replacement
                               Row(
                                 children: [
                                   // Last Replacement Km
-                                  Flexible(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(localizations.lastReplacement, style: textTheme.titleLarge),
-                                        CustomTextField(
-                                            data: state.model.lastReplacementKm != null
-                                                ? state.model.lastReplacementKm.toString()
-                                                : '',
-                                            textInputType: TextInputType.number,
-                                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                            onChange: (value) {
-                                              state.model.lastReplacementKm = int.tryParse(value);
-                                              bloc.add(OnChange(state.model));
-                                            }),
-                                      ],
+                                  Expanded(
+                                    child: _buildTextField(
+                                      localizations.lastReplacement,
+                                      state.model.lastReplacementKm?.toString() ?? '',
+                                      (value) {
+                                        state.model.lastReplacementKm = int.tryParse(value);
+                                        bloc.add(OnChange(state.model));
+                                      },
+                                      textInputType: TextInputType.number,
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     ),
                                   ),
                                   SizedBox(width: 8),
                                   // Last Replacement Date
-                                  Flexible(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(localizations.date, style: textTheme.titleLarge),
-                                        Container(
-                                          padding: EdgeInsets.fromLTRB(0, 8, 0, 16),
-                                          child: OutlinedButton.icon(
-                                            onPressed: () async {
-                                              final value = await showDatePicker(
-                                                context: context,
-                                                firstDate: DateTime(DateTime.now().year - Constants.rangeOfYear),
-                                                lastDate: DateTime.now(),
-                                              );
-                                              state.model.lastReplacementDate = value;
-                                              bloc.add(OnChange(state.model));
-                                            },
-                                            style: OutlinedButton.styleFrom(
-                                              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                                            ),
-                                            icon: const Icon(Icons.calendar_month),
-                                            label: Center(
-                                              child: Text(
-                                                  state.model.lastReplacementDate != null
-                                                      ? DateFormat('dd-MM-yyyy').format(state.model.lastReplacementDate!)
-                                                      : '',
-                                                  style: textTheme.titleLarge),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                  Expanded(
+                                    child: _buildDatePicker(
+                                      localizations.date,
+                                      state.model.lastReplacementDate,
+                                      (value) {
+                                        state.model.lastReplacementDate = value;
+                                        bloc.add(OnChange(state.model));
+                                      },
                                     ),
                                   ),
                                 ],
                               ),
                               // Next Replacement
-                              Text(localizations.nextReplacement, style: textTheme.titleLarge),
-                              CustomTextField(
-                                data: state.model.nextReplacementKm != null ? state.model.nextReplacementKm.toString() : '',
-                                textInputType: TextInputType.number,
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                onChange: (value) {
+                              _buildTextField(
+                                localizations.nextReplacement,
+                                state.model.nextReplacementKm?.toString() ?? '',
+                                (value) {
                                   state.model.nextReplacementKm = int.tryParse(value);
                                   bloc.add(OnChange(state.model));
                                 },
+                                textInputType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               ),
                               // Note
-                              Text(localizations.notes, style: textTheme.titleLarge),
-                              CustomTextField(
-                                  data: state.model.note,
-                                  onChange: (value) {
-                                    state.model.note = value;
-                                    bloc.add(OnChange(state.model));
-                                  }),
-                              Container(
-                                width: double.infinity,
-                                color: Colors.blue,
-                                height: 40,
-                                child: TextButton(
-                                  onPressed: () async {
-                                    await bloc.onSave(state.model);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(localizations.save),
+                              _buildTextField(
+                                localizations.notes,
+                                state.model.note,
+                                (value) {
+                                  state.model.note = value;
+                                  bloc.add(OnChange(state.model));
+                                },
+                              ),
+                              // Save Button
+                              OutlinedButton(
+                                onPressed: () async {
+                                  await bloc.onSave(state.model);
+                                  Navigator.pop(context);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                                  backgroundColor: Colors.blue,
+                                  side: BorderSide(color: Colors.transparent),
+                                ),
+                                child: Center(
+                                  child: Text(localizations.save, style: textTheme.titleLarge!.copyWith(color: Colors.white)),
                                 ),
                               )
                             ],
@@ -184,6 +156,55 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(String label, String? value, Function(String) onChange,
+      {TextInputType? textInputType, List<TextInputFormatter>? inputFormatters}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Theme.of(context).textTheme.titleLarge),
+        CustomTextField(
+          data: value,
+          textInputType: textInputType,
+          inputFormatters: inputFormatters,
+          onChange: onChange,
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget _buildDatePicker(String label, DateTime? date, Function(DateTime?) onChange) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Theme.of(context).textTheme.titleLarge),
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 8, 0, 16),
+          child: OutlinedButton.icon(
+            onPressed: () async {
+              final pickedDate = await showDatePicker(
+                context: context,
+                firstDate: DateTime(DateTime.now().year - Constants.rangeOfYear),
+                lastDate: DateTime.now(),
+              );
+              onChange(pickedDate);
+            },
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            ),
+            icon: const Icon(Icons.calendar_month),
+            label: Center(
+              child: Text(
+                date != null ? DateFormat('dd-MM-yyyy').format(date) : '',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -209,7 +230,7 @@ class ListDeviceType extends StatelessWidget {
                   .map(
                     (e) => AnimatedContainer(
                       padding: EdgeInsets.symmetric(horizontal: 12),
-                      margin: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                      margin: EdgeInsets.only(right: 8, bottom: 8),
                       duration: Duration(milliseconds: 200),
                       curve: Curves.easeInOut,
                       decoration: BoxDecoration(

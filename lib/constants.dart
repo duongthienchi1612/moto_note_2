@@ -1,4 +1,9 @@
-class Database {
+class DatabaseName {
+  static const moteNote = 'moto_note.db';
+  static const masterData = 'master_data.db';
+}
+
+class DatabaseTable {
   static const accessories = 'accessories';
   static const accessoriesType = 'accessories_type';
   static const devices = 'devices';

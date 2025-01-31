@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'constants.dart';
+import 'bloc/home_bloc/home_bloc.dart';
 import 'dependencies.dart';
 import 'preference/user_reference.dart';
 import 'theme/app_colors.dart';
@@ -18,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final _userRef = injector.get<UserReference>();
 
   @override
   void initState() {
@@ -50,18 +48,40 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               background: Image.asset('assets/images/motobike.png'),
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return Container(
-                  color: index.isOdd ? Colors.blue : Colors.black12,
-                  height: 100.0,
-                  child: Center(
-                    child: Text('$index', textScaler: const TextScaler.linear(5)),
+          BlocProvider(
+            create: (context) => HomeBloc()..add(LoadData()),
+            child: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                if (state is HomeLoaded) {
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        final item = state.data[index];
+                        return Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey)), color: Colors.white),
+                          height: 100.0,
+                          child: Text(
+                            item.deviceName ?? '',
+                            style: textTheme.bodyLarge,
+                          ),
+                        );
+                      },
+                      childCount: state.data.length,
+                    ),
+                  );
+                }
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return Center(
+                        child: Text('Chưa có thông tin lịch sử thay thế, hay thêm mới'),
+                      );
+                    },
+                    childCount: 1,
                   ),
                 );
               },
-              childCount: 20,
             ),
           ),
         ],

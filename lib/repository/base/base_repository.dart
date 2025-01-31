@@ -7,9 +7,10 @@ import '../../utilities/database_factory.dart';
 import 'interface.dart';
 
 abstract class BaseReadRepository<T extends CoreReadEntity> implements IBaseReadRepository<T> {
+  final String databaseName;
   final dbFactory = injector.get<DatabaseFactory>();
 
-  BaseReadRepository();
+  BaseReadRepository(this.databaseName);
 
   @override
   Future<T?> getById(String? id) async {
@@ -22,7 +23,7 @@ abstract class BaseReadRepository<T extends CoreReadEntity> implements IBaseRead
   }
 
   @override
-  Future<List<T>?> listAll() async {
+  Future<List<T>> listAll() async {
     return list(null, null, null, null, null, []);
   }
 
@@ -62,14 +63,14 @@ abstract class BaseReadRepository<T extends CoreReadEntity> implements IBaseRead
         Map<String, dynamic>,
       ) mapper,
       [final List<String> args = const <String>[]]) async {
-    final database = await dbFactory.getMasterDatabase();
+    final database = await dbFactory.getDatabase(databaseName);
     final list = await database.list(query, args);
     return list.map((f) => mapper(f)).toList();
   }
 }
 
 abstract class BaseRepository<T extends CoreEntity> extends BaseReadRepository<T> implements IBaseRepository<T> {
-  BaseRepository();
+  BaseRepository(super.databaseName);
 
   final Uuid uuid = const Uuid();
 

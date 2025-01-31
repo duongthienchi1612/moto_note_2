@@ -7,7 +7,7 @@ part 'accessory_type_entity.g.dart';
 @JsonSerializable()
 class AccessoryTypeEntity extends CoreReadEntity {
   @override
-  String get table => Database.accessoriesType;
+  String get table => DatabaseTable.accessoriesType;
 
   @JsonKey(name: 'id')
   final int? id;

@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:developer';
 
 import '../constants.dart';
 
@@ -13,7 +10,8 @@ class CustomTextField extends StatefulWidget {
   final TextInputType? textInputType;
   final Function(String) onChange;
 
-  const CustomTextField({this.data, required this.onChange, this.ignorePointer = false, super.key, this.inputFormatters, this.textInputType});
+  const CustomTextField(
+      {this.data, required this.onChange, this.ignorePointer = false, super.key, this.inputFormatters, this.textInputType});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -36,7 +34,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextField(
         controller: _controller,
         decoration: InputDecoration(
