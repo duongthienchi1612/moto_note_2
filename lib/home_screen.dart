@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import 'bloc/home_bloc/home_bloc.dart';
+import 'constants.dart';
 import 'dependencies.dart';
-import 'preference/user_reference.dart';
+import 'package:moto_note_2/model/device_entity.dart';
 import 'theme/app_colors.dart';
 import 'widget/add_device_form.dart';
+import 'widget/device_item_card.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(String) changeLanguage;
@@ -17,37 +22,44 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   final bloc = injector.get<HomeBloc>();
-  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    // final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: AppColors.mainColor,
-            expandedHeight: 300.0,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset('assets/images/motobike.png'),
+            floating: true,
+            backgroundColor: Colors.white,
+            leading: IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.menu),
             ),
+            actions: [
+              SizedBox(
+                width: 170,
+                child: Text(
+                  localizations.currentKm + '12332',
+                  style: textTheme.titleMedium,
+                ),
+              )
+            ],
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _FlexibleHeaderDelegate(),
           ),
           BlocProvider(
             create: (context) => bloc..add(LoadData()),
@@ -58,15 +70,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                         final item = state.data[index];
-                        return Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey)), color: Colors.white),
-                          height: 100.0,
-                          child: Text(
-                            item.deviceName ?? '',
-                            style: textTheme.bodyLarge,
-                          ),
-                        );
+                        return DeviceItemCard(item: item);
                       },
                       childCount: state.data.length,
                     ),
@@ -111,4 +115,53 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
     );
   }
+}
+
+class _FlexibleHeaderDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final localizations = AppLocalizations.of(context)!;
+    final progress = (maxExtent - shrinkOffset) / maxExtent;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      color: Colors.blue,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Opacity(
+            opacity: progress,
+            child: Visibility(
+              visible: progress > 0.9,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  "Nội dung mở rộng khi maxExtent",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Icon(Icons.list),
+              SizedBox(
+                width: 8,
+              ),
+              Text(
+                localizations.deviceList,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 120;
+  @override
+  double get minExtent => 100;
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
 }

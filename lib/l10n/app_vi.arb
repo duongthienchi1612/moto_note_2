@@ -7,5 +7,7 @@
   "nextReplacement": "Next Replacement",
   "date": "Date",
   "notes": "Additional Notes",
-  "save": "Save Device"
+  "save": "Save Device",
+  "deviceList": "Device List",
+  "currentKm": "Current Km: "
 }

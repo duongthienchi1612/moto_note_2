@@ -1,4 +1,6 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -6,10 +8,13 @@ import 'package:intl/intl.dart';
 import '../bloc/add_device_bloc/add_device_bloc.dart';
 import '../constants.dart';
 import '../dependencies.dart';
+import '../model/master_data/accessory_entity.dart';
 import '../model/master_data/accessory_type_entity.dart';
 import '../theme/app_colors.dart';
+import 'custom_date_picker.dart';
 import 'custom_input_field.dart';
 import 'custom_text_field.dart';
+import 'input_device_name.dart';
 import 'list_device_type.dart';
 
 class AddDeviceForm extends StatefulWidget {
@@ -62,13 +67,19 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Device Name
-                              CustomInputField(
-                                  label: localizations.deviceName,
-                                  value: state.model.deviceName,
-                                  onChanged: (name) {
-                                    state.model.deviceName = name;
-                                    bloc.add(OnChange(state.model));
-                                  }),
+                              InputDeviceName(
+                                localizations: localizations,
+                                accessories: state.accessories,
+                                onSelected: (value) {
+                                  state.model.deviceName = value;
+                                  bloc.add(OnChange(state.model));
+                                },
+                                onChanged: (value) {
+                                  state.model.deviceName = value;
+                                  bloc.add(OnChange(state.model));
+                                },
+                              ),
+                              const SizedBox(height: 16),
                               // Device Type
                               Text(
                                 localizations.deviceType,
@@ -95,6 +106,7 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                         state.model.lastReplacementKm = int.tryParse(value);
                                         bloc.add(OnChange(state.model));
                                       },
+                                      maxLength: 5,
                                       textInputType: TextInputType.number,
                                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     ),
@@ -102,14 +114,14 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                   SizedBox(width: 8),
                                   // Last Replacement Date
                                   Expanded(
-                                    child: _buildDatePicker(
-                                      localizations.date,
-                                      state.model.lastReplacementDate,
-                                      (value) {
-                                        state.model.lastReplacementDate = value;
-                                        bloc.add(OnChange(state.model));
-                                      },
-                                    ),
+                                    child: CustomDatePicker(
+                                        context: context,
+                                        label: localizations.date,
+                                        date: state.model.lastReplacementDate,
+                                        onChanged: (value) {
+                                          state.model.lastReplacementDate = value;
+                                          bloc.add(OnChange(state.model));
+                                        }),
                                   ),
                                 ],
                               ),
@@ -121,6 +133,7 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                                   state.model.nextReplacementKm = int.tryParse(value);
                                   bloc.add(OnChange(state.model));
                                 },
+                                maxLength: 5,
                                 textInputType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               ),
@@ -161,38 +174,6 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
           },
         ),
       ),
-    );
-  }
-
-  Widget _buildDatePicker(String label, DateTime? date, Function(DateTime?) onChange) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: Theme.of(context).textTheme.titleLarge),
-        Padding(
-          padding: EdgeInsets.fromLTRB(0, 8, 0, 16),
-          child: OutlinedButton.icon(
-            onPressed: () async {
-              final pickedDate = await showDatePicker(
-                context: context,
-                firstDate: DateTime(DateTime.now().year - Constants.rangeOfYear),
-                lastDate: DateTime.now(),
-              );
-              onChange(pickedDate);
-            },
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-            ),
-            icon: const Icon(Icons.calendar_month),
-            label: Center(
-              child: Text(
-                date != null ? DateFormat('dd-MM-yyyy').format(date) : '',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

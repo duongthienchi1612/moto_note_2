@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import '../../business/master_data_business.dart';
 import '../../dependencies.dart';
 import '../../model/device_entity.dart';
+import '../../model/master_data/accessory_entity.dart';
 import '../../model/master_data/accessory_type_entity.dart';
 import '../../model/view/add_item_model.dart';
 import '../../repository/interface/devices_repository.dart';
@@ -15,6 +16,7 @@ class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
   final masterData = injector.get<MasterDataBusiness>();
 
   final deviceRepo = injector.get<IDeviceRepository>();
+  late List<String> accessories;
   late List<AccessoryTypeEntity> accessoriesType;
   AddItemModel model = AddItemModel();
 
@@ -25,12 +27,13 @@ class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
 
   Future<void> _onLoadData(LoadData event, Emitter<AddDeviceState> emit) async {
     accessoriesType = masterData.accessoriesType!;
-    emit(AddDeviceLoaded(model: model, accessoriesType: accessoriesType));
+    accessories = masterData.accessories!.map((e) => e.nameVi!).toList();
+    emit(AddDeviceLoaded(model: model, accessories: accessories, accessoriesType: accessoriesType));
   }
 
   Future<void> _onChange(OnChange event, Emitter<AddDeviceState> emit) async {
     model = event.model;
-    emit(AddDeviceLoaded(model: model, accessoriesType: accessoriesType));
+    emit(AddDeviceLoaded(model: model, accessories: accessories, accessoriesType: accessoriesType));
   }
 
   Future<void> onSave(AddItemModel model) async {

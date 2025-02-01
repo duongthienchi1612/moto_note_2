@@ -5,6 +5,7 @@ import 'custom_text_field.dart';
 class CustomInputField extends StatelessWidget {
   final String label;
   final String? value;
+  final int? maxLength;
   final Function(String) onChanged;
 
   final TextInputType? textInputType;
@@ -16,6 +17,7 @@ class CustomInputField extends StatelessWidget {
     required this.onChanged,
     this.textInputType,
     this.inputFormatters,
+    this.maxLength,
     super.key,
   });
 
@@ -30,6 +32,7 @@ class CustomInputField extends StatelessWidget {
           textInputType: textInputType,
           inputFormatters: inputFormatters,
           onChange: onChanged,
+          maxLength: maxLength,
         ),
         const SizedBox(height: 8),
       ],

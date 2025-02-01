@@ -14,6 +14,11 @@ class AppTextTheme {
       fontSize: 24,
       fontFamily: 'Caudex',
       fontWeight: FontWeight.w600,
+    ),    
+    headlineSmall: TextStyle(
+      fontSize: 20,
+      fontFamily: 'Caudex',
+      fontWeight: FontWeight.w600,
     ),
     // Văn bản chính
     titleLarge: TextStyle(
