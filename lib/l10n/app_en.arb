@@ -9,5 +9,7 @@
   "notes": "Additional Notes",
   "save": "Save Device",
   "deviceList": "Device List",
-  "currentKm": "Current Km: "
+  "currentKm": "Current Km:",
+  "deviceListEmpty": "Device list is empty, add new",
+  "setCurrentKmFormTitle": "Current Kilometter"
 }

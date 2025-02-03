@@ -18,9 +18,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  late String statusQuiz;
-  late String houseResult;
-
   @override
   void initState() {
     super.initState();
@@ -41,7 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
     await AppDependencies.initialize();
     final isAllGranted = await _requestPermissions();
     if (isAllGranted) {
-
       final appConfig = injector.get<AppConfiguration>();
       await appConfig.init();
 
@@ -51,6 +47,11 @@ class _SplashScreenState extends State<SplashScreen> {
       final masterData = injector.get<MasterDataBusiness>();
       await masterData.init();
 
+      // get reference data;
+      final userRef = injector.get<UserReference>();
+      if (await userRef.getCurrentKm() == null) {
+        await userRef.setCurrentKm(0);
+      }
     } else {
       await openAppSettings();
       exit(0);

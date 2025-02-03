@@ -28,6 +28,12 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
   final bloc = injector.get<AddDeviceBloc>();
 
   @override
+  void dispose() {
+    bloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;

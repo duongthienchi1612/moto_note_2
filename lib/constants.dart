@@ -15,6 +15,7 @@ class DatabaseTable {
 class PreferenceKey {
   PreferenceKey._();
   static const language = 'LANGUAGE';
+  static const currentKm = 'CURRENT_KM';
 }
 
 class ImagePath {
@@ -31,4 +32,6 @@ class Constants {
   Constants._();
   static const borderRadius = 22.0;
   static const rangeOfYear = 50;
+  static const offsetShowIconDeleted = -80.0;
+  static const archorKm = 400;
 }

@@ -9,6 +9,7 @@ final class HomeLoading extends HomeState {}
 
 final class HomeLoaded extends HomeState {
   final List<DeviceEntity> data;
+  final int currentKm;
 
-  HomeLoaded(this.data);
+  HomeLoaded({required this.data, required this.currentKm});
 }
