@@ -21,6 +21,7 @@ class PreferenceKey {
 class ImagePath {
   ImagePath._();
   static const splash_screen = 'assets/images/splash_screen.png';
+  static const contermet = 'assets/images/contermet.png';
 }
 
 class ScreenName {

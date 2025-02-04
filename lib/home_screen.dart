@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'bloc/home_bloc/home_bloc.dart';
+import 'constants.dart';
 import 'dependencies.dart';
 import 'empty_device_list.dart';
 import 'utilities/string_formatter.dart';
@@ -29,98 +30,102 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          AnimatedWaveBackground(),
-          BlocProvider(
-            create: (context) => bloc..add(LoadData()),
-            child: BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                if (state is HomeLoaded) {
-                  return CustomScrollView(
-                    slivers: <Widget>[
-                      SliverAppBar(
-                        floating: true,
-                        surfaceTintColor: Colors.white,
-                        backgroundColor: Colors.white,
-                        leading: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.menu,
-                            color: Colors.black,
+      body: Container(
+        color: Colors.white,
+        child: Stack(
+          children: [
+            AnimatedWaveBackground(),
+            BlocProvider(
+              create: (context) => bloc..add(LoadData()),
+              child: BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  if (state is HomeLoaded) {
+                    return CustomScrollView(
+                      slivers: <Widget>[
+                        SliverAppBar(
+                          floating: true,
+                          surfaceTintColor: Colors.white,
+                          backgroundColor: Colors.white,
+                          leading: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.menu,
+                              color: Colors.black,
+                            ),
                           ),
+                          actions: [
+                            GestureDetector(
+                              onTap: () async {
+                                final value = await showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return EditCurrentKmForm(currentKm: state.currentKm);
+                                  },
+                                );
+                                await bloc.updateCurrentKm(value);
+                              },
+                              child: Container(
+                                width: 184,
+                                padding: EdgeInsets.all(4),
+                                margin: EdgeInsets.symmetric(horizontal: 8),
+                                decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(22)),
+                                child: Text(
+                                  '${localizations.currentKm} ${StringFormatter.formatDisplayKm(state.currentKm.toString())}',
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.titleMedium!.copyWith(color: Colors.white),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                        actions: [
-                          GestureDetector(
-                            onTap: () async {
-                              final value = await showDialog(
-                                context: context,
-                                builder: (_) {
-                                  return EditCurrentKmForm(currentKm: state.currentKm);
-                                },
-                              );
-                              await bloc.updateCurrentKm(value);
-                            },
-                            child: Container(
-                              width: 184,
-                              padding: EdgeInsets.all(4),
-                              margin: EdgeInsets.symmetric(horizontal: 8),
-                              decoration: BoxDecoration(color: Colors.black,
-                                borderRadius: BorderRadius.circular(22)
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: _FlexibleHeaderDelegate(),
+                        ),
+                        if (state.data.isNotEmpty)
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) => DeviceItemCard(
+                                item: state.data[index],
+                                currentKm: state.currentKm,
+                                deletedItem: (item) => bloc.add(DeleteItem(item.id!)),
                               ),
-                              child: Text(
-                                '${localizations.currentKm} ${StringFormatter.formatDisplayKm(state.currentKm.toString())}',
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                style: textTheme.titleMedium!.copyWith(color: Colors.white),
-                              ),
+                              childCount: state.data.length,
                             ),
                           )
-                        ],
-                      ),
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _FlexibleHeaderDelegate(),
-                      ),
-                      if (state.data.isNotEmpty)
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) => DeviceItemCard(
-                              item: state.data[index],
-                              currentKm: state.currentKm,
-                              deletedItem: (item) => bloc.add(DeleteItem(item.id!)),
-                            ),
-                            childCount: state.data.length,
-                          ),
-                        )
-                      else
-                        EmptyDeviceList(localizations: localizations)
-                    ],
-                  );
-                }
-                return Container();
-              },
+                        else
+                          EmptyDeviceList(localizations: localizations)
+                      ],
+                    );
+                  }
+                  return Container();
+                },
+              ),
             ),
-          ),
-        ],
+            Positioned(bottom: 0, right: 0, left: 0, child: CustomBottomAppBar()),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        shape: CircleBorder(),
-        mini: true,
-        onPressed: () async {
-          await showDialog(
-            context: context,
-            builder: (_) {
-              return AddDeviceForm();
-            },
-          );
-          bloc.add(LoadData());
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add, size: 30),
+      floatingActionButton: Transform.translate(
+        offset: Offset(0, 20),
+        child: FloatingActionButton(
+          shape: CircleBorder(),
+          mini: true,
+          onPressed: () async {
+            await showDialog(
+              context: context,
+              builder: (_) {
+                return AddDeviceForm(isAddNew: true);
+              },
+            );
+            bloc.add(LoadData());
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add, size: 30),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: CustomBottomAppBar(),
     );
   }
 }
@@ -136,16 +141,11 @@ class _FlexibleHeaderDelegate extends SliverPersistentHeaderDelegate {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Opacity(
-            opacity: progress,
-            child: Visibility(
-              visible: progress > 0.9,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  "Nội dung mở rộng khi maxExtent",
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+          Visibility(
+            visible: progress > 0.9,
+            child: Expanded(
+              child: Container(
+                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(ImagePath.contermet))),
               ),
             ),
           ),
@@ -167,7 +167,7 @@ class _FlexibleHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 120;
+  double get maxExtent => 280;
   @override
   double get minExtent => 100;
   @override

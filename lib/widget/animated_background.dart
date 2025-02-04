@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-
 import '../theme/app_colors.dart';
 
 class AnimatedWaveBackground extends StatefulWidget {
@@ -47,91 +45,34 @@ class WavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    List<Color> colors = [
-      AppColors.waveColorBold,
-      AppColors.waveColorMedium,
+    final List<Color> colors = [
       AppColors.waveColorSoft,
+      AppColors.waveColorMedium,
+      AppColors.waveColorBold,
     ];
 
-    final List<double> height = [0.8, 0.7, 0.6];
+    final List<double> heightFactors = [0.5, 0.6, 0.7];
+    final List<double> phaseShifts = [pi / 2, pi / 4, 3 * pi / 4];
+    const double waveHeight = 20;
 
-
-    // for (int i = 0; i < colors.length; i++) {
-    //   final Paint paint = Paint()..color = colors[i];
-    //   final Path path = Path();
-
-    //   final double waveHeight = 20;
-    //   final double waveWidth = size.width;
-
-    //   path.moveTo(0, size.height * 0.5);
-    //   for (double j = 0; j < size.width; j++) {
-    //     path.lineTo(j,
-    //         size.height * 0.8 + sin((j / waveWidth * 2 * pi) + (animationValue * 2 * pi) + (i * pi / 4)) * waveHeight);
-    //   }
-    //   path.lineTo(size.width, size.height);
-    //   path.lineTo(0, size.height);
-    //   path.close();
-
-    //   canvas.drawPath(path, paint);
-    // }
-
-      
-
-
-
-      final Paint paint0 = Paint()..color = AppColors.waveColorSoft;
-      final Path path0 = Path();
-
-      final double waveHeight0 = 20;
-      final double waveWidth0 = size.width;
-
-
-      path0.moveTo(0, size.height);
-      for (double j = 0; j < size.width; j++) {
-        path0.lineTo(j,
-            size.height * 0.5 + sin((j / waveWidth0 * 2 * pi) + (animationValue * 2 * pi) + (3 * pi / 4)) * waveHeight0);
-      }
-      path0.lineTo(size.width, size.height);
-      path0.lineTo(0, size.height);
-      path0.close();
-
-      canvas.drawPath(path0, paint0);
-
-      final Paint paint1 = Paint()..color = AppColors.waveColorMedium;
-      final Path path1 = Path();
-
-      final double waveHeight1 = 20;
-      final double waveWidth1 = size.width;
-
-
-      path1.moveTo(0, size.height);
-      for (double j = 0; j < size.width; j++) {
-        path1.lineTo(j,
-            size.height * 0.6 + sin((j / waveWidth1 * 2 * pi) + (animationValue * 2 * pi) + (1 * pi / 4)) * waveHeight1);
-      }
-      path1.lineTo(size.width, size.height);
-      path1.lineTo(0, size.height);
-      path1.close();
-
-      canvas.drawPath(path1, paint1);
-
-      final Paint paint = Paint()..color = AppColors.waveColorBold;
+    for (int i = 0; i < colors.length; i++) {
+      final Paint paint = Paint()..color = colors[i];
       final Path path = Path();
 
-      final double waveHeight = 20;
-      final double waveWidth = size.width;
-
-
-      path.moveTo(0, size.height * 0.5);
+      path.moveTo(0, size.height);
       for (double j = 0; j < size.width; j++) {
-        path.lineTo(j,
-            size.height * 0.7 + sin((j / waveWidth * 2 * pi) + (animationValue * 2 * pi) + (2 * pi / 4)) * waveHeight);
+        path.lineTo(
+          j,
+          size.height * heightFactors[i] +
+              sin((j / size.width * 2 * pi) + (animationValue * 2 * pi) + phaseShifts[i]) * waveHeight,
+        );
       }
       path.lineTo(size.width, size.height);
       path.lineTo(0, size.height);
       path.close();
 
       canvas.drawPath(path, paint);
+    }
   }
 
   @override

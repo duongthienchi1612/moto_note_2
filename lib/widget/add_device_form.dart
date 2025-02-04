@@ -1,24 +1,18 @@
-import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
 import '../bloc/add_device_bloc/add_device_bloc.dart';
-import '../constants.dart';
 import '../dependencies.dart';
-import '../model/master_data/accessory_entity.dart';
-import '../model/master_data/accessory_type_entity.dart';
-import '../theme/app_colors.dart';
 import 'custom_date_picker.dart';
 import 'custom_input_field.dart';
-import 'custom_text_field.dart';
 import 'input_device_name.dart';
 import 'list_device_type.dart';
 
 class AddDeviceForm extends StatefulWidget {
-  const AddDeviceForm({super.key});
+  final String? deviceId;
+  final bool isAddNew;
+  const AddDeviceForm({super.key, this.deviceId, this.isAddNew = false});
 
   @override
   State<AddDeviceForm> createState() => _AddDeviceFormState();
@@ -41,7 +35,7 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.all(16),
       child: BlocProvider(
-        create: (context) => bloc..add(LoadData()),
+        create: (context) => bloc..add(LoadData(deviceId: widget.deviceId, isAddNew: widget.isAddNew)),
         child: BlocBuilder<AddDeviceBloc, AddDeviceState>(
           builder: (context, state) {
             if (state is AddDeviceLoaded) {
@@ -54,7 +48,10 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        Align(child: Text(localizations.addDeviceFormTitle, style: textTheme.headlineMedium)),
+                        Align(
+                            child: Text(
+                                widget.isAddNew ? localizations.addDeviceFormTitle : localizations.editDeviceFormTitle,
+                                style: textTheme.headlineMedium)),
                         Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
@@ -74,6 +71,7 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                             children: [
                               // Device Name
                               InputDeviceName(
+                                deviceName: state.model.deviceName,
                                 localizations: localizations,
                                 accessories: state.accessories,
                                 onSelected: (value) {

@@ -1,6 +1,7 @@
 {
   "appName": "Moto Note",
   "addDeviceFormTitle": "Add Device",
+  "editDeviceFormTitle": "Edit Device",
   "deviceName": "Device Name",
   "deviceType": "Device Type",
   "lastReplacement": "Last Replacement",

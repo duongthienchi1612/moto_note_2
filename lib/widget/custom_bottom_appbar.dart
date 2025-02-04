@@ -5,11 +5,14 @@ class CustomBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipPath(
-      clipper: BottomBarClipper(),
-      child: Container(
-        height: 40,
-        color: Colors.red,
+    return CustomPaint(
+      painter: BottomBarShadowPainter(),
+      child: ClipPath(
+        clipper: BottomBarClipper(),
+        child: Container(
+          color: Colors.white,
+          height: 40,
+        ),
       ),
     );
   }
@@ -19,13 +22,12 @@ class BottomBarClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final Path path = Path();
-    
-    double width = size.width;
-    double height = size.height;
 
-    path.lineTo(0, height);
+    final double width = size.width;
+    final double height = size.height;
+
+    path.moveTo(0, height);
     path.quadraticBezierTo(width * 0.5, 0 - 20, width, height);
-    path.lineTo(width, 0);
     path.close();
 
     return path;
@@ -33,4 +35,26 @@ class BottomBarClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+class BottomBarShadowPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint shadowPaint = Paint()
+      ..color = Colors.grey
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 10);
+
+    final Paint borderPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final Path path = BottomBarClipper().getClip(size);
+
+    canvas.drawPath(path, shadowPaint); // Vẽ shadow
+    canvas.drawPath(path, borderPaint); // Vẽ border
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

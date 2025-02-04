@@ -4,6 +4,7 @@ import '../constants.dart';
 import '../model/device_entity.dart';
 import '../utilities/string_formatter.dart';
 import '../utilities/colors_utility.dart';
+import 'add_device_form.dart';
 
 class DeviceItemCard extends StatefulWidget {
   final DeviceEntity item;
@@ -38,6 +39,14 @@ class _DeviceItemCardState extends State<DeviceItemCard> {
         if (dx > Constants.offsetShowIconDeleted) {
           setState(() => dx = 0);
         }
+      },
+      onTap: () async {
+        await showDialog(
+          context: context,
+          builder: (_) {
+            return AddDeviceForm(deviceId: widget.item.id);
+          },
+        );
       },
       child: Stack(
         alignment: Alignment.centerRight,

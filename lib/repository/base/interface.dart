@@ -20,7 +20,7 @@ class IBaseReadRepository<T extends CoreReadEntity> {
   }
 }
 
-class IBaseRepository<T extends CoreEntity> {
+class IBaseRepository<T extends CoreEntity> extends IBaseReadRepository<T>{
   Future insert(T? item) async {}
 
   Future update(T? item) async {}

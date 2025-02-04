@@ -1,28 +1,49 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../constants.dart';
 
-class InputDeviceName extends StatelessWidget {
+class InputDeviceName extends StatefulWidget {
   const InputDeviceName({
     super.key,
     required this.localizations,
     required this.accessories,
     required this.onChanged,
     required this.onSelected,
+    this.deviceName,
   });
-
+  final String? deviceName;
   final AppLocalizations localizations;
   final List<String> accessories;
   final Function(String) onChanged;
   final Function(dynamic) onSelected;
 
   @override
+  State<InputDeviceName> createState() => _InputDeviceNameState();
+}
+
+class _InputDeviceNameState extends State<InputDeviceName> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.deviceName ?? '');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(localizations.deviceName, style: Theme.of(context).textTheme.titleLarge),
+        Text(widget.localizations.deviceName, style: Theme.of(context).textTheme.titleLarge),
         SizedBox(height: 8),
         LayoutBuilder(builder: (ctx, constraints) {
           return Autocomplete<String>(
@@ -31,33 +52,45 @@ class InputDeviceName extends StatelessWidget {
                 return const Iterable<String>.empty();
               }
               final input = removeDiacritics(textEditingValue.text.toLowerCase());
-              return accessories.where(
+              return widget.accessories.where(
                 (String option) {
                   return removeDiacritics(option.toLowerCase()).contains(input);
                 },
               );
             },
-            onSelected: onSelected,
+            // onSelected: widget.onSelected,
+            onSelected: (String selectedValue) {
+                setState(() {
+                  _controller.text = selectedValue; // Cập nhật giá trị khi chọn từ gợi ý
+                });
+                widget.onSelected(selectedValue);
+              },
             fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+              textEditingController.text = _controller.text; // Giữ giá trị nhập vào
+                textEditingController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: textEditingController.text.length),
+                );
               return TextField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(Constants.borderRadius),
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Constants.borderRadius),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(Constants.borderRadius)),
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(Constants.borderRadius)),
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(Constants.borderRadius)),
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(Constants.borderRadius)),
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                ),
-                onChanged: onChanged,
-              );
+                  onChanged: (value) {
+                    _controller.text = value;
+                    widget.onChanged(value);
+                  });
             },
             optionsViewBuilder: (context, onSelected, options) {
               return Align(

@@ -1,3 +1,4 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -18,6 +19,8 @@ class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
   final deviceRepo = injector.get<IDeviceRepository>();
   late List<String> accessories;
   late List<AccessoryTypeEntity> accessoriesType;
+  late bool isAddNew;
+  String? deviceId;
   AddItemModel model = AddItemModel();
 
   AddDeviceBloc() : super(AddDeviceInitial()) {
@@ -28,6 +31,20 @@ class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
   Future<void> _onLoadData(LoadData event, Emitter<AddDeviceState> emit) async {
     accessoriesType = masterData.accessoriesType!;
     accessories = masterData.accessories!.map((e) => e.nameVi!).toList();
+    isAddNew = event.isAddNew;
+    if (StringUtils.isNotNullOrEmpty(event.deviceId)) {
+      deviceId = event.deviceId;
+      final item = await deviceRepo.getById(event.deviceId!);
+      model
+        ..deviceName = item!.deviceName
+        ..deviceTypeId = item.deviceTypeId
+        ..lastReplacementKm = item.lastReplacementKm
+        ..lastReplacementDate = item.lastReplacementDate
+        ..nextReplacementKm = item.nextReplacementKm
+        ..note = item.note;
+      emit(AddDeviceLoaded(model: model, accessories: accessories, accessoriesType: accessoriesType));
+      return;
+    }
     emit(AddDeviceLoaded(model: model, accessories: accessories, accessoriesType: accessoriesType));
   }
 
@@ -37,14 +54,25 @@ class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
   }
 
   Future<void> onSave(AddItemModel model) async {
-    // save vo data base
-    final item = DeviceEntity()
-      ..deviceName = model.deviceName
-      ..deviceTypeId = model.deviceTypeId
-      ..lastReplacementKm = model.lastReplacementKm
-      ..lastReplacementDate = model.lastReplacementDate
-      ..nextReplacementKm = model.nextReplacementKm
-      ..note = model.note;
-    await deviceRepo.insert(item);
+    if (isAddNew) {
+      final item = DeviceEntity()
+        ..deviceName = model.deviceName
+        ..deviceTypeId = model.deviceTypeId
+        ..lastReplacementKm = model.lastReplacementKm
+        ..lastReplacementDate = model.lastReplacementDate
+        ..nextReplacementKm = model.nextReplacementKm
+        ..note = model.note;
+      await deviceRepo.insert(item);
+    } else {
+      final item = await deviceRepo.getById(deviceId!);
+      item!
+        ..deviceName = model.deviceName
+        ..deviceTypeId = model.deviceTypeId
+        ..lastReplacementKm = model.lastReplacementKm
+        ..lastReplacementDate = model.lastReplacementDate
+        ..nextReplacementKm = model.nextReplacementKm
+        ..note = model.note;
+      await deviceRepo.update(item);
+    }
   }
 }

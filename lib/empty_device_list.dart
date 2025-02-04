@@ -13,7 +13,7 @@ class EmptyDeviceList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: Center(child: Text(localizations.deviceListEmpty)),
+      child: Center(child: Text(localizations.deviceListEmpty, style: Theme.of(context).textTheme.headlineSmall,)),
     );
   }
 }
