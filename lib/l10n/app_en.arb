@@ -12,5 +12,14 @@
   "deviceList": "Device List",
   "currentKm": "Current Km:",
   "deviceListEmpty": "Device list is empty, add new",
-  "setCurrentKmFormTitle": "Current Kilometter"
+  "setCurrentKmFormTitle": "Current Kilometter",
+  "sortDeviceFormTitle": "Sort by",
+  "sortLowToHigh": "Low to high",
+  "sortHighToLow": "High to low",
+  "sortDeviceCompletedButton": "Done",
+  "fieldName": "Name",
+  "fieldLastReplacementKm": "Last Replacement Km",
+  "fieldLastReplacementDate": "Last Replacement Date",
+  "fieldNextReplacementKm": "Next Replacement Km",
+  "emptyDeviceName": "Device name is required"
 }

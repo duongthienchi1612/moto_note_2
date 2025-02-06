@@ -1,20 +1,17 @@
-import 'package:basic_utils/basic_utils.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../constants.dart';
+import 'base/base_widget.dart';
 
 class InputDeviceName extends StatefulWidget {
   const InputDeviceName({
     super.key,
-    required this.localizations,
     required this.accessories,
     required this.onChanged,
     required this.onSelected,
     this.deviceName,
   });
   final String? deviceName;
-  final AppLocalizations localizations;
   final List<String> accessories;
   final Function(String) onChanged;
   final Function(dynamic) onSelected;
@@ -23,7 +20,7 @@ class InputDeviceName extends StatefulWidget {
   State<InputDeviceName> createState() => _InputDeviceNameState();
 }
 
-class _InputDeviceNameState extends State<InputDeviceName> {
+class _InputDeviceNameState extends BaseState<InputDeviceName> {
   late TextEditingController _controller;
 
   @override
@@ -43,7 +40,7 @@ class _InputDeviceNameState extends State<InputDeviceName> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.localizations.deviceName, style: Theme.of(context).textTheme.titleLarge),
+        Text(localizations.deviceName, style: Theme.of(context).textTheme.titleLarge),
         SizedBox(height: 8),
         LayoutBuilder(builder: (ctx, constraints) {
           return Autocomplete<String>(
@@ -61,16 +58,16 @@ class _InputDeviceNameState extends State<InputDeviceName> {
             // onSelected: widget.onSelected,
             onSelected: (String selectedValue) {
                 setState(() {
-                  _controller.text = selectedValue; // Cập nhật giá trị khi chọn từ gợi ý
+                  _controller.text = selectedValue;
                 });
                 widget.onSelected(selectedValue);
               },
             fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-              textEditingController.text = _controller.text; // Giữ giá trị nhập vào
+              textEditingController.text = _controller.text;
                 textEditingController.selection = TextSelection.fromPosition(
                   TextPosition(offset: textEditingController.text.length),
                 );
-              return TextField(
+              return TextFormField(
                   controller: textEditingController,
                   focusNode: focusNode,
                   decoration: InputDecoration(

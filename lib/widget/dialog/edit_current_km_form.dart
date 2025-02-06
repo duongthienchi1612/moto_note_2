@@ -2,10 +2,10 @@ import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
-import '../dependencies.dart';
-import '../preference/user_reference.dart';
-import 'custom_text_field.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../dependencies.dart';
+import '../../preference/user_reference.dart';
+import '../base/base_widget.dart';
+import '../custom_text_field.dart';
 
 class EditCurrentKmForm extends StatefulWidget {
   final int currentKm;
@@ -19,7 +19,7 @@ class EditCurrentKmForm extends StatefulWidget {
   State<EditCurrentKmForm> createState() => _EditCurrentKmFormState();
 }
 
-class _EditCurrentKmFormState extends State<EditCurrentKmForm> {
+class _EditCurrentKmFormState extends BaseState<EditCurrentKmForm> {
 
   late int _currentKm;
 
@@ -32,7 +32,6 @@ class _EditCurrentKmFormState extends State<EditCurrentKmForm> {
   final userRef = injector.get<UserReference>();
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return Dialog(
       backgroundColor: Colors.white,
@@ -42,10 +41,18 @@ class _EditCurrentKmFormState extends State<EditCurrentKmForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              localizations.setCurrentKmFormTitle,
-              style: textTheme.headlineSmall,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  localizations.setCurrentKmFormTitle,
+                  style: textTheme.headlineMedium,
+                ),
+                Spacer(),
+                IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close))
+              ],
             ),
+            SizedBox(height: 8),
             CustomTextField(
               data: widget.currentKm.toString(),
               textInputType: TextInputType.number,
@@ -56,13 +63,14 @@ class _EditCurrentKmFormState extends State<EditCurrentKmForm> {
               },
               maxLength: 5,
             ),
+            SizedBox(height: 16),
             OutlinedButton(
               onPressed: () async {
                 Navigator.pop(context, _currentKm);
               },
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.black,
                 side: BorderSide(color: Colors.transparent),
               ),
               child: Center(

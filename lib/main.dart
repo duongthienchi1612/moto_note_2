@@ -6,10 +6,23 @@ import 'home_screen.dart';
 import 'preference/user_reference.dart';
 import 'splash_screen.dart';
 import 'theme/app_text_theme.dart';
+import 'utilities/localization_helper.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp(initialLanguage: await UserReference().getLanguage() ?? 'en'));
+  runApp(MyApp(initialLanguage: await UserReference().getLanguage() ?? 'vi'));
+  initLocalization();
+}
+
+void initLocalization() {
+  final context = navigatorKey.currentContext;
+  if (context != null) {
+    LocalizationHelper.init(AppLocalizations.of(context)!);
+  } else {
+    Future.delayed(Duration.zero, initLocalization);
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -38,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       locale: _locale,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

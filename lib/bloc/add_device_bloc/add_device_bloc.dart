@@ -9,14 +9,16 @@ import '../../model/master_data/accessory_entity.dart';
 import '../../model/master_data/accessory_type_entity.dart';
 import '../../model/view/add_item_model.dart';
 import '../../repository/interface/devices_repository.dart';
+import '../../utilities/localization_helper.dart';
 
 part 'add_device_event.dart';
 part 'add_device_state.dart';
 
 class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
   final masterData = injector.get<MasterDataBusiness>();
-
   final deviceRepo = injector.get<IDeviceRepository>();
+  final localizations = LocalizationHelper.instance;
+
   late List<String> accessories;
   late List<AccessoryTypeEntity> accessoriesType;
   late bool isAddNew;
@@ -74,5 +76,13 @@ class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
         ..note = model.note;
       await deviceRepo.update(item);
     }
+  }
+
+  String? validateForm(AddItemModel model) {
+    if (StringUtils.isNullOrEmpty(model.deviceName)) {
+      emit(AddDeviceLoaded(model: model, accessories: accessories, accessoriesType: accessoriesType));
+      return localizations.emptyDeviceName;
+    }
+    return null;
   }
 }

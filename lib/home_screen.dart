@@ -6,12 +6,15 @@ import 'bloc/home_bloc/home_bloc.dart';
 import 'constants.dart';
 import 'dependencies.dart';
 import 'empty_device_list.dart';
+import 'model/option_model.dart';
 import 'utilities/string_formatter.dart';
-import 'widget/add_device_form.dart';
 import 'widget/animated_background.dart';
+import 'widget/base/base_widget.dart';
 import 'widget/custom_bottom_appbar.dart';
 import 'widget/device_item_card.dart';
-import 'widget/edit_current_km_form.dart';
+import 'widget/dialog/add_device_form.dart';
+import 'widget/dialog/edit_current_km_form.dart';
+import 'widget/dialog/sort_form.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(String) changeLanguage;
@@ -21,13 +24,11 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends BaseState<HomeScreen> with SingleTickerProviderStateMixin {
   final bloc = injector.get<HomeBloc>();
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -62,7 +63,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     return EditCurrentKmForm(currentKm: state.currentKm);
                                   },
                                 );
-                                await bloc.updateCurrentKm(value);
+                                if (value != null) {
+                                  await bloc.updateCurrentKm(value);
+                                }
                               },
                               child: Container(
                                 width: 184,
@@ -81,7 +84,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                         SliverPersistentHeader(
                           pinned: true,
-                          delegate: _FlexibleHeaderDelegate(),
+                          delegate: _FlexibleHeaderDelegate(
+                            (value) {
+                              bloc.add(SortData(filter: value, localizations: localizations));
+                            },
+                            currentKm: state.currentKm.toString(),
+                          ),
                         ),
                         if (state.data.isNotEmpty)
                           SliverList(
@@ -90,12 +98,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 item: state.data[index],
                                 currentKm: state.currentKm,
                                 deletedItem: (item) => bloc.add(DeleteItem(item.id!)),
+                                onChanged: () => bloc.add(LoadData()),
                               ),
                               childCount: state.data.length,
                             ),
                           )
                         else
-                          EmptyDeviceList(localizations: localizations)
+                          EmptyDeviceList()
                       ],
                     );
                   }
@@ -131,6 +140,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 }
 
 class _FlexibleHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final String? currentKm;
+  final Function(OptionModel) onFilter;
+
+  _FlexibleHeaderDelegate(this.onFilter, {this.currentKm});
+
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     final localizations = AppLocalizations.of(context)!;
@@ -144,14 +158,22 @@ class _FlexibleHeaderDelegate extends SliverPersistentHeaderDelegate {
           Visibility(
             visible: progress > 0.9,
             child: Expanded(
-              child: Container(
-                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(ImagePath.contermet))),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(image: DecorationImage(image: AssetImage(ImagePath.contermet))),
+                  ),
+                  Text(
+                    currentKm ?? '',
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.white),
+                  ),
+                ],
               ),
             ),
           ),
           Row(
             children: [
-              Icon(Icons.list),
               SizedBox(
                 width: 8,
               ),
@@ -159,6 +181,23 @@ class _FlexibleHeaderDelegate extends SliverPersistentHeaderDelegate {
                 localizations.deviceList,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
+              Spacer(),
+              // Sort
+              IconButton(
+                  onPressed: () async {
+                    final value = await showDialog<OptionModel>(
+                      context: context,
+                      builder: (_) {
+                        return SortForm(
+                          localizations: localizations,
+                        );
+                      },
+                    );
+                    if (value != null) {
+                      onFilter(value);
+                    }
+                  },
+                  icon: Icon(Icons.sort))
             ],
           ),
         ],

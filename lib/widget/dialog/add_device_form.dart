@@ -1,13 +1,15 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../bloc/add_device_bloc/add_device_bloc.dart';
-import '../dependencies.dart';
-import 'custom_date_picker.dart';
-import 'custom_input_field.dart';
-import 'input_device_name.dart';
-import 'list_device_type.dart';
+import '../../bloc/add_device_bloc/add_device_bloc.dart';
+import '../../dependencies.dart';
+import '../base/base_widget.dart';
+import '../custom_date_picker.dart';
+import '../custom_input_field.dart';
+import '../input_device_name.dart';
+import '../list_device_type.dart';
 
 class AddDeviceForm extends StatefulWidget {
   final String? deviceId;
@@ -18,7 +20,7 @@ class AddDeviceForm extends StatefulWidget {
   State<AddDeviceForm> createState() => _AddDeviceFormState();
 }
 
-class _AddDeviceFormState extends State<AddDeviceForm> {
+class _AddDeviceFormState extends BaseState<AddDeviceForm> {
   final bloc = injector.get<AddDeviceBloc>();
 
   @override
@@ -29,7 +31,6 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return Dialog(
       backgroundColor: Colors.white,
@@ -72,7 +73,6 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                               // Device Name
                               InputDeviceName(
                                 deviceName: state.model.deviceName,
-                                localizations: localizations,
                                 accessories: state.accessories,
                                 onSelected: (value) {
                                   state.model.deviceName = value;
@@ -153,8 +153,15 @@ class _AddDeviceFormState extends State<AddDeviceForm> {
                               // Save Button
                               OutlinedButton(
                                 onPressed: () async {
-                                  await bloc.onSave(state.model);
-                                  Navigator.pop(context);
+                                  final value = bloc.validateForm(state.model);
+                                  if (StringUtils.isNullOrEmpty(value)) {
+                                    await bloc.onSave(state.model);
+                                    Navigator.pop(context);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(value ?? '')),
+                                    );
+                                  }
                                 },
                                 style: OutlinedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),

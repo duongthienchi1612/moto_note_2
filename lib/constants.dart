@@ -36,3 +36,12 @@ class Constants {
   static const offsetShowIconDeleted = -80.0;
   static const archorKm = 400;
 }
+class SortField {
+  SortField._();
+  static const name = 'NAME';
+  static const lastKm = 'LASTKM';
+  static const lastDate = 'LASTDATE';
+  static const nextKm = 'NEXTKM';
+  static const aZ = 'AZ';
+  static const Za = 'ZA';
+}

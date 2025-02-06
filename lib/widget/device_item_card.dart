@@ -4,14 +4,15 @@ import '../constants.dart';
 import '../model/device_entity.dart';
 import '../utilities/string_formatter.dart';
 import '../utilities/colors_utility.dart';
-import 'add_device_form.dart';
+import 'dialog/add_device_form.dart';
 
 class DeviceItemCard extends StatefulWidget {
   final DeviceEntity item;
   final int currentKm;
   final Function(DeviceEntity) deletedItem;
+  final Function() onChanged;
 
-  const DeviceItemCard({Key? key, required this.item, required this.deletedItem, required this.currentKm}) : super(key: key);
+  const DeviceItemCard({Key? key, required this.item, required this.deletedItem, required this.currentKm, required this.onChanged}) : super(key: key);
 
   @override
   State<DeviceItemCard> createState() => _DeviceItemCardState();
@@ -40,6 +41,7 @@ class _DeviceItemCardState extends State<DeviceItemCard> {
           setState(() => dx = 0);
         }
       },
+      // Edit device
       onTap: () async {
         await showDialog(
           context: context,
@@ -47,6 +49,7 @@ class _DeviceItemCardState extends State<DeviceItemCard> {
             return AddDeviceForm(deviceId: widget.item.id);
           },
         );
+        widget.onChanged();
       },
       child: Stack(
         alignment: Alignment.centerRight,
