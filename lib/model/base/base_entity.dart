@@ -7,4 +7,5 @@ abstract class CoreReadEntity {
 
 abstract class CoreEntity extends CoreReadEntity {
   String? id;
+  DateTime? create_date;
 }

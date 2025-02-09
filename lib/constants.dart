@@ -9,12 +9,15 @@ class DatabaseTable {
   static const accessories = 'accessories';
   static const accessoriesType = 'accessories_type';
   static const devices = 'devices';
+  static const users = 'users';
   static const sqlSemiColonEncode = r'\003B';
 }
 
 class PreferenceKey {
   PreferenceKey._();
   static const language = 'LANGUAGE';
+  static const currentUserId = 'CURRENT_USER_ID';
+  static const currentUserName = 'CURRENT_USER_NAME';
   static const currentKm = 'CURRENT_KM';
 }
 

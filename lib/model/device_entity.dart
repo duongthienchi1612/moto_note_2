@@ -8,6 +8,9 @@ class DeviceEntity extends CoreEntity {
   @override
   String get table => DatabaseTable.devices;
 
+  @JsonKey(name: 'user_id')
+  String? userId;
+
   @JsonKey(name: 'device_name')
   String? deviceName;
   
@@ -28,9 +31,6 @@ class DeviceEntity extends CoreEntity {
 
   @JsonKey(name: 'note')
   String? note;
-
-  @JsonKey(name: 'create_at')
-  DateTime? createAt;
 
   DeviceEntity();
 

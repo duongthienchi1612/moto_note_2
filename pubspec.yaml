@@ -107,6 +107,9 @@ flutter:
     - family: Poppins
       fonts:
         - asset: assets/fonts/Poppins.ttf
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka.ttf
 
 flutter_gen:
   l10n:

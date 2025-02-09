@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
 import '../model/master_data/accessory_type_entity.dart';
-import '../theme/app_colors.dart';
 
 class ListDeviceType extends StatelessWidget {
   final List<AccessoryTypeEntity> accessoriesType;
@@ -11,77 +9,34 @@ class ListDeviceType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ...accessoriesType
-                  .take(4)
-                  .map(
-                    (e) => AnimatedContainer(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      margin: EdgeInsets.only(right: 8, bottom: 8),
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      decoration: BoxDecoration(
-                        color: deviceTypeSelected == e.id ? AppColors.devicesType[e.id]! : Colors.white,
-                        borderRadius: BorderRadius.circular(Constants.borderRadius),
-                        border: Border.all(
-                          color: deviceTypeSelected == e.id ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            textStyle: deviceTypeSelected == e.id ? textTheme.titleLarge : textTheme.bodyLarge),
-                        onPressed: () => onSelected(e.id!),
-                        child: Text(e.nameVi!),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ],
+    return SizedBox(
+      width: double.infinity,
+      child: DropdownMenu<int>(
+        initialSelection:
+            accessoriesType.firstWhere((e) => e.id == deviceTypeSelected, orElse: () => accessoriesType.last).id,
+        expandedInsets: EdgeInsets.all(0),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(22),
           ),
-          Row(
-            children: [
-              ...accessoriesType
-                  .skip(4)
-                  .map(
-                    (e) => AnimatedContainer(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      margin: EdgeInsets.only(right: 8),
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      decoration: BoxDecoration(
-                        color: deviceTypeSelected == e.id ? AppColors.devicesType[e.id]! : Colors.white,
-                        borderRadius: BorderRadius.circular(Constants.borderRadius),
-                        border: Border.all(
-                          color: deviceTypeSelected == e.id ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            textStyle: deviceTypeSelected == e.id ? textTheme.titleLarge : textTheme.bodyLarge),
-                        onPressed: () => onSelected(e.id!),
-                        child: Text(e.nameVi!),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ],
-          ),
-        ],
+        ),
+        menuStyle: MenuStyle(
+            backgroundColor: WidgetStatePropertyAll(Colors.white),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(22),
+              ),
+            ),
+            alignment: AlignmentDirectional.bottomStart,
+            visualDensity: VisualDensity(vertical: 2.0),
+            elevation: WidgetStatePropertyAll(6)),
+        onSelected: (int? value) {
+          onSelected(value!);
+        },
+        leadingIcon: Icon(Icons.two_wheeler, size: 24),
+        dropdownMenuEntries: accessoriesType.map<DropdownMenuEntry<int>>((AccessoryTypeEntity field) {
+          return DropdownMenuEntry<int>(value: field.id!, label: field.nameVi!);
+        }).toList(),
       ),
     );
   }

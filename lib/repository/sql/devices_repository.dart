@@ -7,8 +7,9 @@ class DeviceRepository extends BaseRepository<DeviceEntity> implements IDeviceRe
   DeviceRepository() : super(DatabaseName.moteNote);
 
   @override
-  Future<List<DeviceEntity>> getAllDevice() async {
-    final listContact = await list(null, null, null, null, null);
+  Future<List<DeviceEntity>> getAllDeviceByUserId(String userId) async {
+    final condition = "user_id = '$userId'";
+    final listContact = await list(condition, null, null, null, null);
     return listContact;
   }
 }

@@ -37,5 +37,10 @@ class AppTextTheme {
       fontFamily: 'Inter',
       fontWeight: FontWeight.w500,
     ),
+    labelLarge: TextStyle(
+      fontSize: 16,
+      fontFamily: 'Fredoka',
+      fontWeight: FontWeight.bold,
+    )
   );
 }

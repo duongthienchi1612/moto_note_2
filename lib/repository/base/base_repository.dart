@@ -80,6 +80,7 @@ abstract class BaseRepository<T extends CoreEntity> extends BaseReadRepository<T
       return;
     }
     item.id = item.id ?? uuid.v4();
+    item.create_date = DateTime.now();
     final database = await dbFactory.getUserDatabase();
     await database.insert(item);
   }

@@ -1,31 +1,28 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import '../base/base_widget.dart';
 import '../custom_text_field.dart';
 
-class EditCurrentKmForm extends StatefulWidget {
-  final int currentKm;
+class AddUserForm extends StatefulWidget {
+  final String? userName;
+  final bool? isAddNew;
+  AddUserForm({super.key, required this.userName, this.isAddNew = false});
 
-  const EditCurrentKmForm({
-    super.key,
-    required this.currentKm,
-  });
-  
   @override
-  State<EditCurrentKmForm> createState() => _EditCurrentKmFormState();
+  State<AddUserForm> createState() => _AddUserFormState();
 }
 
-class _EditCurrentKmFormState extends BaseState<EditCurrentKmForm> {
+class _AddUserFormState extends BaseState<AddUserForm> {
 
-  late int _currentKm;
+
+  late String _userName;
 
   @override
   void initState() {
+    _userName = widget.userName ?? '';
     super.initState();
-    _currentKm = widget.currentKm;
   }
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -40,7 +37,7 @@ class _EditCurrentKmFormState extends BaseState<EditCurrentKmForm> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  localizations.setCurrentKmFormTitle,
+                  localizations.addUserNameFormTitle,
                   style: theme.textTheme.headlineMedium,
                 ),
                 Spacer(),
@@ -49,19 +46,18 @@ class _EditCurrentKmFormState extends BaseState<EditCurrentKmForm> {
             ),
             SizedBox(height: 8),
             CustomTextField(
-              data: widget.currentKm.toString(),
+              data: _userName,
               textInputType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChange: (value) {
                 if (StringUtils.isNullOrEmpty(value)) return;
-                _currentKm = int.tryParse(value)!;
+                _userName = value;
               },
               maxLength: 5,
             ),
             SizedBox(height: 16),
             OutlinedButton(
               onPressed: () async {
-                Navigator.pop(context, _currentKm);
+                Navigator.pop(context, _userName);
               },
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
@@ -69,7 +65,7 @@ class _EditCurrentKmFormState extends BaseState<EditCurrentKmForm> {
                 side: BorderSide(color: Colors.transparent),
               ),
               child: Center(
-                child: Text(localizations.save, style: theme.textTheme.titleLarge!.copyWith(color: Colors.white)),
+                child: Text(widget.isAddNew! ? localizations.add : localizations.save, style: theme.textTheme.titleLarge!.copyWith(color: Colors.white)),
               ),
             )
           ],

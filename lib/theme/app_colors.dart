@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
-  static const mainColor = Color.fromRGBO(200, 227, 255, 1);
-  static const textMainColor = Color(0xFF1C1C1C);
   static const statusRed = Color(0xFFFF3B30);
   static const statusYellow = Color(0xFFFFCC00);
   static const statusGreen = Color(0xFF34C759);
   static const waveColorBold = Color(0xFFDADEF8);
   static const waveColorMedium = Color(0xFFE0E3F4);
   static const waveColorSoft = Color(0xFFEDF0FB);
+  static const buyMeACoffeColor = Color(0xFFF8D700);
+  static const menuBackgroundColor = Color(0xFF162039);
 
   static const Map<int, Color> devicesType = {
     1: Color(0xFFD32F2F), // Hệ thống động cơ

@@ -66,61 +66,64 @@ class _SortFormState extends BaseState<SortForm> {
             SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: DropdownButton<String>(
-                value: fieldValue,
-                underline: SizedBox(),
-                isExpanded: true,
-                onChanged: (String? value) {
+              child: DropdownMenu<String>(
+                initialSelection: fieldValue,
+                expandedInsets: EdgeInsets.all(0),
+                inputDecorationTheme: InputDecorationTheme(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                ),
+                menuStyle: MenuStyle(
+                    backgroundColor: WidgetStatePropertyAll(Colors.white),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                    ),
+                    alignment: AlignmentDirectional.bottomStart,
+                    visualDensity: VisualDensity(vertical: 2.0),
+                    elevation: WidgetStatePropertyAll(6)),
+                onSelected: (String? value) {
                   setState(() {
                     fieldValue = value!;
                   });
                 },
-                selectedItemBuilder: (BuildContext context) {
-                  return fields.map((OptionModel field) {
-                    return Row(
-                      children: [
-                        Icon(Icons.text_fields, size: 24),
-                        SizedBox(width: 16),
-                        Text(field.name, style: textTheme.titleLarge),
-                      ],
-                    );
-                  }).toList();
-                },
-                items: fields.map<DropdownMenuItem<String>>((OptionModel field) {
-                  return DropdownMenuItem<String>(
-                    value: field.value,
-                    child: Text(field.name),
-                  );
+                leadingIcon: Icon(Icons.text_fields, size: 24),
+                dropdownMenuEntries: fields.map<DropdownMenuEntry<String>>((OptionModel field) {
+                  return DropdownMenuEntry<String>(value: field.value, label: field.name);
                 }).toList(),
               ),
             ),
+            SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
-              child: DropdownButton<String>(
-                value: optionValue,
-                underline: SizedBox(),
-                isExpanded: true,
-                onChanged: (String? value) {
+              child: DropdownMenu<String>(
+                initialSelection: optionValue,
+                expandedInsets: EdgeInsets.all(0),
+                inputDecorationTheme: InputDecorationTheme(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                ),
+                menuStyle: MenuStyle(
+                    backgroundColor: WidgetStatePropertyAll(Colors.white),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                    ),
+                    alignment: AlignmentDirectional.bottomStart,
+                    visualDensity: VisualDensity(vertical: 2.0),
+                    elevation: WidgetStatePropertyAll(6)),
+                onSelected: (String? value) {
                   setState(() {
                     optionValue = value!;
                   });
                 },
-                selectedItemBuilder: (BuildContext context) {
-                  return options.map((OptionModel option) {
-                    return Row(
-                      children: [
-                        Icon(Icons.sort_by_alpha, size: 24),
-                        SizedBox(width: 16),
-                        Text(option.name, style: textTheme.titleLarge),
-                      ],
-                    );
-                  }).toList();
-                },
-                items: options.map<DropdownMenuItem<String>>((OptionModel option) {
-                  return DropdownMenuItem<String>(
-                    value: option.value,
-                    child: Text(option.name),
-                  );
+                leadingIcon: Icon(Icons.sort_by_alpha, size: 24),
+                dropdownMenuEntries: options.map<DropdownMenuEntry<String>>((OptionModel field) {
+                  return DropdownMenuEntry<String>(value: field.value, label: field.name);
                 }).toList(),
               ),
             ),

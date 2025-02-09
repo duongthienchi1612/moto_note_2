@@ -10,6 +10,7 @@ import '../../model/master_data/accessory_type_entity.dart';
 import '../../model/view/add_item_model.dart';
 import '../../repository/interface/devices_repository.dart';
 import '../../utilities/localization_helper.dart';
+import '../../utilities/static_var.dart';
 
 part 'add_device_event.dart';
 part 'add_device_state.dart';
@@ -58,6 +59,7 @@ class AddDeviceBloc extends Bloc<AddDeviceEvent, AddDeviceState> {
   Future<void> onSave(AddItemModel model) async {
     if (isAddNew) {
       final item = DeviceEntity()
+        ..userId = StaticVar.currentUserId
         ..deviceName = model.deviceName
         ..deviceTypeId = model.deviceTypeId
         ..lastReplacementKm = model.lastReplacementKm

@@ -91,12 +91,13 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
                               ),
                               SizedBox(height: 8),
                               ListDeviceType(
-                                  accessoriesType: state.accessoriesType,
-                                  deviceTypeSelected: state.model.deviceTypeId,
-                                  onSelected: (id) {
-                                    state.model.deviceTypeId = id;
-                                    bloc.add(OnChange(state.model));
-                                  }),
+                                accessoriesType: state.accessoriesType,
+                                deviceTypeSelected: state.model.deviceTypeId,
+                                onSelected: (id) {
+                                  state.model.deviceTypeId = id;
+                                  bloc.add(OnChange(state.model));
+                                },
+                              ),
                               SizedBox(height: 16),
                               // Last Replacement
                               Row(
@@ -169,7 +170,7 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
                                   side: BorderSide(color: Colors.transparent),
                                 ),
                                 child: Center(
-                                  child: Text(localizations.save, style: textTheme.titleLarge!.copyWith(color: Colors.white)),
+                                  child: Text(localizations.saveDevice, style: textTheme.titleLarge!.copyWith(color: Colors.white)),
                                 ),
                               )
                             ],

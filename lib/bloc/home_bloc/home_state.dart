@@ -8,8 +8,7 @@ final class HomeInitial extends HomeState {}
 final class HomeLoading extends HomeState {}
 
 final class HomeLoaded extends HomeState {
-  final List<DeviceEntity> data;
-  final int currentKm;
+  final HomeViewModel model;
 
-  HomeLoaded({required this.data, required this.currentKm});
+  HomeLoaded(this.model);
 }

@@ -11,7 +11,7 @@ class CustomBottomAppBar extends StatelessWidget {
         clipper: BottomBarClipper(),
         child: Container(
           color: Colors.white,
-          height: 40,
+          height: 50,
         ),
       ),
     );
