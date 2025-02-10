@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../model/user_entity.dart';
 import '../theme/app_colors.dart';
+import 'account_tile.dart';
 import 'base/base_widget.dart';
 import 'dialog/add_user_form.dart';
 
@@ -13,12 +14,14 @@ class SideMenu extends StatefulWidget {
   final Function(String userName) onAddAccount;
   final Function(String userName) onEditAccount;
   final Function(String userId) onSwitchAccount;
+  final Function(String userId) onDeletedAccount;
   SideMenu(
     this.user, {
     super.key,
     required this.onAddAccount,
     required this.onEditAccount,
     required this.onSwitchAccount,
+    required this.onDeletedAccount,
     required this.users,
   });
 
@@ -41,7 +44,14 @@ class _SideMenuState extends BaseState<SideMenu> {
               children: [
                 Column(
                   children: [
-                    _buildAccountTile(widget.user, isCurrent: true),
+                    // buildAccountTile(widget.user, isCurrent: true),
+                    AccountTile(
+                      user: widget.user,
+                      isCurrent: true,
+                      onEditAccount: widget.onEditAccount,
+                      onSwitchAccount: widget.onSwitchAccount,
+                      onDeleted: (_) {},
+                    ),
                     const Divider(),
                     const SizedBox(height: 16),
                     _buildAccountList(),
@@ -64,32 +74,20 @@ class _SideMenuState extends BaseState<SideMenu> {
     );
   }
 
-  Widget _buildAccountTile(UserEntity user, {bool isCurrent = false}) {
-    return ListTile(
-      leading: const CircleAvatar(
-        backgroundColor: Colors.white24,
-        child: Icon(Icons.person, color: Colors.white),
-      ),
-      title: Text(
-        user.userName!,
-        style: theme.textTheme.headlineSmall!.copyWith(color: Colors.white),
-      ),
-      trailing: isCurrent ? const Icon(Icons.check, color: Colors.white) : null,
-      onTap: () {
-        if (!isCurrent) {
-          widget.onSwitchAccount(user.id!);
-        }
-      },
-    );
-  }
-
   Widget _buildAccountList() {
     return Flexible(
       child: ListView(
         shrinkWrap: true,
         children: widget.users
             .where((account) => account.userName != widget.user.userName)
-            .map((account) => _buildAccountTile(account))
+            .map(
+              (account) => AccountTile(
+                user: account,
+                onEditAccount: widget.onEditAccount,
+                onSwitchAccount: widget.onSwitchAccount,
+                onDeleted: widget.onDeletedAccount,
+              ),
+            )
             .toList(),
       ),
     );

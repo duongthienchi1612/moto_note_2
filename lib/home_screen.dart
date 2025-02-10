@@ -28,10 +28,10 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends BaseState<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMixin {
   final bloc = injector.get<HomeBloc>();
 
-  late AnimationController _animationController;
+  late AnimationController _animationController, _listAnimationController;
   late Animation animation, scaleAnimation, listAppearAnimation;
 
   bool isMenuOpen = false;
@@ -46,6 +46,12 @@ class _HomeScreenState extends BaseState<HomeScreen> with SingleTickerProviderSt
     )..addListener(() {
         setState(() {});
       });
+    _listAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    )..addListener(() {
+        setState(() {});
+      });
 
     animation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.fastOutSlowIn),
@@ -53,9 +59,17 @@ class _HomeScreenState extends BaseState<HomeScreen> with SingleTickerProviderSt
     scaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.fastOutSlowIn),
     );
-    listAppearAnimation = Tween<double>(begin: 1, end: 0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    listAppearAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _listAnimationController, curve: Curves.easeInOut),
     );
+    _listAnimationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _listAnimationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -83,6 +97,7 @@ class _HomeScreenState extends BaseState<HomeScreen> with SingleTickerProviderSt
                       onEditAccount: (value) => bloc.add(EditAccount(value)),
                       onAddAccount: (value) => bloc.add(AddAccount(value)),
                       onSwitchAccount: (value) => bloc.add(SwitchAccount(value)),
+                      onDeletedAccount: (value) => bloc.add(DeleteAccount(value)),
                     ),
                   ),
 
@@ -119,7 +134,7 @@ class _HomeScreenState extends BaseState<HomeScreen> with SingleTickerProviderSt
                                               },
                                             );
                                             if (value != null) {
-                                              await bloc.updateCurrentKm(value);
+                                              bloc.add(UpdateCurrentKm(value));
                                             }
                                           },
                                           child: Container(
@@ -128,11 +143,25 @@ class _HomeScreenState extends BaseState<HomeScreen> with SingleTickerProviderSt
                                             margin: EdgeInsets.symmetric(horizontal: 8),
                                             decoration: BoxDecoration(
                                                 color: Colors.black, borderRadius: BorderRadius.circular(22)),
-                                            child: Text(
-                                              '${localizations.currentKm} ${StringFormatter.formatDisplayKm(state.model.currentKm.toString())}',
-                                              maxLines: 2,
-                                              textAlign: TextAlign.center,
-                                              style: textTheme.titleMedium!.copyWith(color: Colors.white),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  localizations.currentKm,
+                                                  style: textTheme.titleMedium!.copyWith(color: Colors.white),
+                                                ),
+                                                TweenAnimationBuilder(
+                                                  tween: IntTween(begin: 0, end: state.model.currentKm),
+                                                  curve: Curves.easeInOutCirc,
+                                                  duration: Duration(milliseconds: 600),
+                                                  builder: (context, value, child) {
+                                                    return Text(
+                                                      ' $value',
+                                                      style: textTheme.titleMedium!.copyWith(color: Colors.white),
+                                                    );
+                                                  },
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         )

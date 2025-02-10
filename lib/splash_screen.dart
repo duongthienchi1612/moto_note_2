@@ -62,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
       final userRepo = injector.get<IUserRepository>();
       final localizations = LocalizationHelper.instance;
       final currentUserId = await userRef.getCurrentUserId();
-      StaticVar.currentUserId = currentUserId!;
+      StaticVar.currentUserId = currentUserId ?? '';
       if (StringUtils.isNullOrEmpty(currentUserId)) {
         final item = UserEntity()
           ..userName = localizations.userNameTemp

@@ -47,12 +47,10 @@ class _AddUserFormState extends BaseState<AddUserForm> {
             SizedBox(height: 8),
             CustomTextField(
               data: _userName,
-              textInputType: TextInputType.number,
               onChange: (value) {
                 if (StringUtils.isNullOrEmpty(value)) return;
                 _userName = value;
               },
-              maxLength: 5,
             ),
             SizedBox(height: 16),
             OutlinedButton(

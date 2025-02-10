@@ -15,6 +15,10 @@ class SortData extends HomeEvent {
   final AppLocalizations localizations;
   SortData({required this.localizations, required this.filter});
 }
+class UpdateCurrentKm extends HomeEvent {
+  final int currentKm;
+  UpdateCurrentKm(this.currentKm);
+}
 
 // account
 class AddAccount extends HomeEvent {
@@ -30,4 +34,8 @@ class EditAccount extends HomeEvent {
 class SwitchAccount extends HomeEvent {
   final String userId;
   SwitchAccount(this.userId);
+}
+class DeleteAccount extends HomeEvent {
+  final String userId;
+  DeleteAccount(this.userId);
 }

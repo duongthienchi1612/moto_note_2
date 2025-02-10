@@ -28,8 +28,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadData>(_onLoadData);
     on<DeleteItem>(_onDeleteItem);
     on<SortData>(_onSortData);
+    on<UpdateCurrentKm>(_onUpdateCurrentKm);
     on<AddAccount>(_onAddAccount);
     on<SwitchAccount>(_onSwitchAccount);
+    on<EditAccount>(_onEditAccount);
+    on<DeleteAccount>(_onDeleteAccount);
   }
 
   Future<void> _onLoadData(LoadData event, Emitter<HomeState> emit) async {
@@ -46,6 +49,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final model = currentState.model;
     final item = data.firstWhereOrNull((e) => e.id == event.id);
     await deviceRepository.delete(item);
+
     model.data.removeWhere((e) => e.id == event.id);
     emit(HomeLoaded(model));
   }
@@ -66,11 +70,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoaded(model));
   }
 
+  Future<void> _onUpdateCurrentKm(UpdateCurrentKm event, Emitter<HomeState> emit) async {
+    final currentState = state as HomeLoaded;
+    final model = currentState.model;
+    await userRef.setCurrentKm(event.currentKm);
+
+    model.currentKm = event.currentKm;
+    emit(HomeLoaded(model));
+  }
+
+  // account
   Future<void> _onAddAccount(AddAccount event, Emitter<HomeState> emit) async {
     final currentState = state as HomeLoaded;
     final model = currentState.model;
     final item = UserEntity()..userName = event.userName;
     await usersRepository.insert(item);
+    
     final users = (await usersRepository.listAll())!.where((e) => e.id != StaticVar.currentUserId).toList();
     model.users = users;
     emit(HomeLoaded(currentState.model));
@@ -81,10 +96,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final model = currentState.model;
     await userRef.setCurrentUserId(event.userId);
     StaticVar.currentUserId = event.userId;
-    final listAllUser = await usersRepository.listAll();
     data = await deviceRepository.getAllDeviceByUserId(StaticVar.currentUserId);
-    currentKm = await userRef.getCurrentKm() ?? 0;
 
+    final listAllUser = await usersRepository.listAll();
     model.data = await deviceRepository.getAllDeviceByUserId(StaticVar.currentUserId);
     model.currentKm = await userRef.getCurrentKm() ?? 0;
     model.users = listAllUser!.where((e) => e.id != event.userId).toList();
@@ -92,8 +106,31 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoaded(currentState.model));
   }
 
-  Future<void> updateCurrentKm(int value) async {
-    await userRef.setCurrentKm(value);
-    add(LoadData());
+  Future<void> _onEditAccount(EditAccount event, Emitter<HomeState> emit) async {
+    final currentState = state as HomeLoaded;
+    final model = currentState.model;
+
+    final user = await usersRepository.getById(StaticVar.currentUserId);
+    user!.userName = event.userName;
+    await usersRepository.update(user);
+
+    final listAllUser = await usersRepository.listAll();
+    model.users = listAllUser!.where((e) => e.id != StaticVar.currentUserId).toList();
+    model.currentUser = listAllUser.firstWhereOrNull((e) => e.id == StaticVar.currentUserId)!;
+    emit(HomeLoaded(currentState.model));
   }
+
+  Future<void> _onDeleteAccount(DeleteAccount event, Emitter<HomeState> emit) async {
+    final currentState = state as HomeLoaded;
+    final model = currentState.model;
+
+    final user = await usersRepository.getById(event.userId);
+    await usersRepository.delete(user);
+
+    final listAllUser = await usersRepository.listAll();
+    model.users = listAllUser!.where((e) => e.id != StaticVar.currentUserId).toList();
+    model.currentUser = listAllUser.firstWhereOrNull((e) => e.id == StaticVar.currentUserId)!;
+    emit(HomeLoaded(currentState.model));
+  }
+
 }
