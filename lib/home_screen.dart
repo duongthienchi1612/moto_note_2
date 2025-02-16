@@ -64,268 +64,225 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => bloc..add(LoadData()),
-      child: Stack(
-        children: [
-          BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              if (state is HomeLoaded) {
-                return Scaffold(
-                  backgroundColor: AppColors.menuBackgroundColor,
-                  body: Stack(
-                    children: [
-                      // Side menu
-                      AnimatedPositioned(
-                        duration: Duration(microseconds: 200),
-                        curve: Curves.fastOutSlowIn,
-                        width: 288,
-                        left: state.model.isMenuOpen ? 0 : -288,
-                        height: MediaQuery.of(context).size.height,
-                        child: SideMenu(
-                          state.model.currentUser,
-                          users: state.model.users,
-                          onEditAccount: (value) => bloc.add(EditAccount(value)),
-                          onAddAccount: (value) => bloc.add(AddAccount(value)),
-                          onSwitchAccount: (value) => bloc.add(SwitchAccount(value)),
-                          onDeletedAccount: (value) => bloc.add(DeleteAccount(value)),
-                        ),
-                      ),
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          if (state is HomeLoaded) {
+            return Scaffold(
+              backgroundColor: AppColors.menuBackgroundColor,
+              body: Stack(
+                children: [
+                  // Side menu
+                  AnimatedPositioned(
+                    duration: Duration(microseconds: 200),
+                    curve: Curves.fastOutSlowIn,
+                    width: 288,
+                    left: state.model.isMenuOpen ? 0 : -288,
+                    height: MediaQuery.of(context).size.height,
+                    child: SideMenu(
+                      state.model.currentUser,
+                      users: state.model.users,
+                      onEditAccount: (value) => bloc.add(EditAccount(value)),
+                      onAddAccount: (value) => bloc.add(AddAccount(value)),
+                      onSwitchAccount: (value) => bloc.add(SwitchAccount(value)),
+                      onDeletedAccount: (value) => bloc.add(DeleteAccount(value)),
+                    ),
+                  ),
 
-                      // Main Content
-                      Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.001)
-                          ..rotateY(animation.value - 30 * animation.value * pi / 180),
-                        child: Transform.translate(
-                          offset: Offset(animation.value * 288, 0),
-                          child: Transform.scale(
-                            scale: scaleAnimation.value,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(22)),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (state.model.isMenuOpen) {
-                                    _animationController.reverse();
-                                    bloc.add(OpenMenu(false));
-                                  }
-                                },
-                                child: Container(
-                                  color: Colors.white,
-                                  child: Stack(
-                                    children: [
-                                      AnimatedWaveBackground(),
-                                      SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            // App bar
-                                            SizedBox(height: MediaQuery.of(context).padding.top),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {
-                                                    if (!state.model.isMenuOpen) {
-                                                      _animationController.forward();
-                                                    } else {
-                                                      _animationController.reverse();
-                                                    }
-                                                    bloc.add(OpenMenu(!state.model.isMenuOpen));
+                  // Main Content
+                  Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, 0.001)
+                      ..rotateY(animation.value - 30 * animation.value * pi / 180),
+                    child: Transform.translate(
+                      offset: Offset(animation.value * 288, 0),
+                      child: Transform.scale(
+                        scale: scaleAnimation.value,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(22)),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (state.model.isMenuOpen) {
+                                _animationController.reverse();
+                                bloc.add(OpenMenu(false));
+                              }
+                            },
+                            child: Container(
+                              color: Colors.white,
+                              child: Stack(
+                                children: [
+                                  AnimatedWaveBackground(),
+                                  SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        // App bar
+                                        SizedBox(height: MediaQuery.of(context).padding.top),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {
+                                                if (!state.model.isMenuOpen) {
+                                                  _animationController.forward();
+                                                } else {
+                                                  _animationController.reverse();
+                                                }
+                                                bloc.add(OpenMenu(!state.model.isMenuOpen));
+                                              },
+                                              icon: Icon(
+                                                Icons.menu,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                final value = await showDialog(
+                                                  context: context,
+                                                  builder: (_) {
+                                                    return EditCurrentKmForm(currentKm: state.model.currentKm);
                                                   },
-                                                  icon: Icon(
-                                                    Icons.menu,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    final value = await showDialog(
-                                                      context: context,
-                                                      builder: (_) {
-                                                        return EditCurrentKmForm(currentKm: state.model.currentKm);
-                                                      },
-                                                    );
-                                                    if (value != null) {
-                                                      bloc.add(UpdateCurrentKm(value));
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    width: 184,
-                                                    padding: EdgeInsets.all(4),
-                                                    margin: EdgeInsets.symmetric(horizontal: 8),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.black, borderRadius: BorderRadius.circular(22)),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          localizations.currentKm,
+                                                );
+                                                if (value != null) {
+                                                  bloc.add(UpdateCurrentKm(value));
+                                                }
+                                              },
+                                              child: Container(
+                                                width: 184,
+                                                padding: EdgeInsets.all(4),
+                                                margin: EdgeInsets.symmetric(horizontal: 8),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.black, borderRadius: BorderRadius.circular(22)),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      localizations.currentKm,
+                                                      style: theme.textTheme.titleMedium!.copyWith(color: Colors.white),
+                                                    ),
+                                                    TweenAnimationBuilder(
+                                                      tween: IntTween(begin: 0, end: state.model.currentKm),
+                                                      curve: Curves.easeInOutCirc,
+                                                      duration: Duration(milliseconds: 600),
+                                                      builder: (context, value, child) {
+                                                        return Text(
+                                                          ' $value',
                                                           style: theme.textTheme.titleMedium!
                                                               .copyWith(color: Colors.white),
-                                                        ),
-                                                        TweenAnimationBuilder(
-                                                          tween: IntTween(begin: 0, end: state.model.currentKm),
-                                                          curve: Curves.easeInOutCirc,
-                                                          duration: Duration(milliseconds: 600),
-                                                          builder: (context, value, child) {
-                                                            return Text(
-                                                              ' $value',
-                                                              style: theme.textTheme.titleMedium!
-                                                                  .copyWith(color: Colors.white),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ],
+                                                        );
+                                                      },
                                                     ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-
-                                            // Background animation
-                                            // IgnorePointer(
-                                            //   ignoring: state.model.isMenuOpen,
-                                            //   child: SizedBox(
-                                            //     height: 220,
-                                            //     child: GameWidget(
-                                            //       game: EndlessBackground(),
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            const SizedBox(
-                                              height: 220,
-                                            ),
-
-                                            // Device list
-                                            Row(
-                                              children: [
-                                                SizedBox(width: 8),
-                                                Text(
-                                                  localizations.deviceList,
-                                                  style: theme.textTheme.headlineSmall,
-                                                ),
-                                                Spacer(),
-                                                // Sort
-                                                IconButton(
-                                                    onPressed: () async {
-                                                      final value = await showDialog<OptionModel>(
-                                                        context: context,
-                                                        builder: (_) {
-                                                          return SortForm();
-                                                        },
-                                                      );
-                                                      if (value != null) {
-                                                        bloc.add(SortData(value));
-                                                      }
-                                                    },
-                                                    icon: Icon(Icons.sort))
-                                              ],
-                                            ),
-                                            if (state.model.data.isNotEmpty) ...[
-                                              IgnorePointer(
-                                                ignoring: state.model.isMenuOpen,
-                                                child: ListView.builder(
-                                                  shrinkWrap: true,
-                                                  padding: EdgeInsets.zero,
-                                                  physics: NeverScrollableScrollPhysics(),
-                                                  itemCount: state.model.data.length,
-                                                  itemBuilder: (ctx, index) {
-                                                    return DeviceItemCard(
-                                                      item: state.model.data[index],
-                                                      currentKm: state.model.currentKm,
-                                                      deletedItem: (item) => bloc.add(DeleteItem(item.id!)),
-                                                      onChanged: () => bloc.add(LoadData()),
-                                                    );
-                                                  },
+                                                  ],
                                                 ),
                                               ),
-                                              SizedBox(height: 48),
-                                            ] else
-                                              Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 120),
-                                                  child: Text(
-                                                    localizations.deviceListEmpty,
-                                                    style: theme.textTheme.headlineSmall,
-                                                  ),
-                                                ),
-                                              ),
+                                            )
                                           ],
                                         ),
-                                      ),
-                                    ],
+
+                                        //Background animation
+                                        IgnorePointer(
+                                          ignoring: state.model.isMenuOpen,
+                                          child: SizedBox(
+                                            height: 220,
+                                            child: GameWidget(
+                                              game: EndlessBackground(),
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Device list
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 8),
+                                            Text(
+                                              localizations.deviceList,
+                                              style: theme.textTheme.headlineSmall,
+                                            ),
+                                            Spacer(),
+                                            // Sort
+                                            IconButton(
+                                                onPressed: () async {
+                                                  final value = await showDialog<OptionModel>(
+                                                    context: context,
+                                                    builder: (_) {
+                                                      return SortForm();
+                                                    },
+                                                  );
+                                                  if (value != null) {
+                                                    bloc.add(SortData(value));
+                                                  }
+                                                },
+                                                icon: Icon(Icons.sort))
+                                          ],
+                                        ),
+                                        if (state.model.data.isNotEmpty) ...[
+                                          IgnorePointer(
+                                            ignoring: state.model.isMenuOpen,
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.zero,
+                                              physics: NeverScrollableScrollPhysics(),
+                                              itemCount: state.model.data.length,
+                                              itemBuilder: (ctx, index) {
+                                                return DeviceItemCard(
+                                                  item: state.model.data[index],
+                                                  currentKm: state.model.currentKm,
+                                                  deletedItem: (item) => bloc.add(DeleteItem(item.id!)),
+                                                  onChanged: () => bloc.add(LoadData()),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          SizedBox(height: 48),
+                                        ] else
+                                          Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(top: 120),
+                                              child: Text(
+                                                localizations.deviceListEmpty,
+                                                style: theme.textTheme.headlineSmall,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  floatingActionButton: Visibility(
-                    visible: !state.model.isMenuOpen,
-                    child: Transform.translate(
-                      offset: Offset(0, 4),
-                      child: FloatingActionButton(
-                        shape: CircleBorder(),
-                        mini: true,
-                        onPressed: () async {
-                          await showDialog(
-                            context: context,
-                            builder: (_) {
-                              return AddDeviceForm(isAddNew: true);
-                            },
-                          );
-                          bloc.add(LoadData());
+                ],
+              ),
+              floatingActionButton: Visibility(
+                visible: !state.model.isMenuOpen,
+                child: Transform.translate(
+                  offset: Offset(0, 4),
+                  child: FloatingActionButton(
+                    shape: CircleBorder(),
+                    mini: true,
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AddDeviceForm(isAddNew: true);
                         },
-                        backgroundColor: Colors.blue,
-                        child: const Icon(Icons.add, size: 30),
-                      ),
-                    ),
+                      );
+                      bloc.add(LoadData());
+                    },
+                    backgroundColor: Colors.blue,
+                    child: const Icon(Icons.add, size: 30),
                   ),
-                  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-                );
-              }
-              return HomeScreenSkeleton();
-            },
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 48,
-            right: 0,
-            left: 0,
-            child: BlocBuilder<HomeBloc, HomeState>(
-              buildWhen: (previus, current) {
-                if (previus is HomeInitial) {
-                  return true;
-                }
-                if (previus is HomeLoaded && current is HomeLoaded) {
-                  if (previus.model.isMenuOpen != current.model.isMenuOpen) {
-                    return true;
-                  }
-                }
-                return false;
-              },
-              builder: (context, state) {
-                if (state is HomeLoaded && state.model.isMenuOpen == false) {
-                  return Transform.translate(
-                    offset: Offset(animation.value * 288, 0),
-                    child: Transform.scale(
-                      scale: scaleAnimation.value,
-                      child: SizedBox(
-                        height: 220,
-                        child: GameWidget(
-                          game: EndlessBackground(),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return SizedBox();
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            );
+          }
+          return HomeScreenSkeleton();
+        },
       ),
     );
   }
