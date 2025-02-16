@@ -88,14 +88,15 @@ class _AccountTileState extends BaseState<AccountTile> {
             duration: Duration(milliseconds: 180),
             transform: Matrix4.translationValues(dx, 0, 0),
             child: ListTile(
-              leading: const CircleAvatar(
+              leading: CircleAvatar(
                 backgroundColor: Colors.white24,
-                child: Icon(Icons.person, color: Colors.white),
+                child: Icon(widget.isCurrent ? Icons.face_6 : Icons.person, color: Colors.white),
               ),
               title: Text(
                 widget.user.userName!,
                 style: theme.textTheme.headlineSmall!.copyWith(color: Colors.white),
               ),
+              contentPadding: EdgeInsets.only(left: 16),
               trailing: widget.isCurrent ? const Icon(Icons.check, color: Colors.white) : null,
             ),
           ),

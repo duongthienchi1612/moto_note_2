@@ -18,10 +18,11 @@ class CustomDatePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: Theme.of(context).textTheme.titleLarge),
+        Text(label, style: textTheme.titleLarge),
         Padding(
           padding: EdgeInsets.fromLTRB(0, 8, 0, 16),
           child: OutlinedButton.icon(
@@ -40,7 +41,7 @@ class CustomDatePicker extends StatelessWidget {
             label: Center(
               child: Text(
                 date != null ? DateFormat('dd-MM-yyyy').format(date!) : '',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: textTheme.titleLarge,
               ),
             ),
           ),

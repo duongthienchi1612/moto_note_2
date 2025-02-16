@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:meta/meta.dart';
 
 import '../../constants.dart';
@@ -33,14 +32,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SwitchAccount>(_onSwitchAccount);
     on<EditAccount>(_onEditAccount);
     on<DeleteAccount>(_onDeleteAccount);
+    on<OpenMenu>(_onOpenMenu);
   }
 
   Future<void> _onLoadData(LoadData event, Emitter<HomeState> emit) async {
+    // await Future.delayed(Duration(seconds: 2));
     data = await deviceRepository.getAllDeviceByUserId(StaticVar.currentUserId);
     currentKm = await userRef.getCurrentKm() ?? 0;
     final user = await usersRepository.getById(StaticVar.currentUserId);
     final users = (await usersRepository.listAll())!.where((e) => e.id != StaticVar.currentUserId).toList();
-    final model = HomeViewModel(data, currentKm, user!, users);
+    final model = HomeViewModel(data, currentKm, user!, users, false);
     emit(HomeLoaded(model));
   }
 
@@ -85,7 +86,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final model = currentState.model;
     final item = UserEntity()..userName = event.userName;
     await usersRepository.insert(item);
-    
+
     final users = (await usersRepository.listAll())!.where((e) => e.id != StaticVar.currentUserId).toList();
     model.users = users;
     emit(HomeLoaded(currentState.model));
@@ -133,4 +134,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoaded(currentState.model));
   }
 
+  Future<void> _onOpenMenu(OpenMenu event, Emitter<HomeState> emit) async {
+    final currentState = state as HomeLoaded;
+    final model = currentState.model;
+    emit(HomeLoaded(model.copyWith(isMenuOpen: event.isOpen)));
+  }
 }

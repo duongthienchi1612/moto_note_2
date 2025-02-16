@@ -35,7 +35,11 @@ class ListDeviceType extends StatelessWidget {
         },
         leadingIcon: Icon(Icons.two_wheeler, size: 24),
         dropdownMenuEntries: accessoriesType.map<DropdownMenuEntry<int>>((AccessoryTypeEntity field) {
-          return DropdownMenuEntry<int>(value: field.id!, label: field.nameVi!);
+          return DropdownMenuEntry<int>(
+            value: field.id!,
+            label: field.nameVi!,
+            style: ButtonStyle(textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodyMedium)),
+          );
         }).toList(),
       ),
     );

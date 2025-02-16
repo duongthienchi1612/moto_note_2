@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../constants.dart';
 import '../../model/option_model.dart';
 import '../base/base_widget.dart';
 
 class SortForm extends StatefulWidget {
-  final AppLocalizations localizations;
   const SortForm({
     super.key,
-    required this.localizations,
   });
 
   @override
@@ -26,14 +23,14 @@ class _SortFormState extends BaseState<SortForm> {
     super.initState();
 
     fields = [
-      OptionModel(widget.localizations.fieldName, SortField.name),
-      OptionModel(widget.localizations.fieldLastReplacementKm, SortField.lastKm),
-      OptionModel(widget.localizations.fieldLastReplacementDate, SortField.lastDate),
-      OptionModel(widget.localizations.fieldNextReplacementKm, SortField.nextKm),
+      OptionModel(localizations.fieldName, SortField.name),
+      OptionModel(localizations.fieldLastReplacementKm, SortField.lastKm),
+      OptionModel(localizations.fieldLastReplacementDate, SortField.lastDate),
+      OptionModel(localizations.fieldNextReplacementKm, SortField.nextKm),
     ];
     options = [
-      OptionModel(widget.localizations.sortLowToHigh, SortField.aZ),
-      OptionModel(widget.localizations.sortHighToLow, SortField.Za),
+      OptionModel(localizations.sortLowToHigh, SortField.aZ),
+      OptionModel(localizations.sortHighToLow, SortField.Za),
     ];
 
     fieldValue = fields.first.value;
@@ -42,8 +39,6 @@ class _SortFormState extends BaseState<SortForm> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Dialog(
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.all(16),
@@ -57,7 +52,7 @@ class _SortFormState extends BaseState<SortForm> {
               children: [
                 Text(
                   localizations.sortDeviceFormTitle,
-                  style: textTheme.headlineMedium,
+                  style: theme.textTheme.headlineMedium,
                 ),
                 Spacer(),
                 IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close))
@@ -91,7 +86,13 @@ class _SortFormState extends BaseState<SortForm> {
                 },
                 leadingIcon: Icon(Icons.text_fields, size: 24),
                 dropdownMenuEntries: fields.map<DropdownMenuEntry<String>>((OptionModel field) {
-                  return DropdownMenuEntry<String>(value: field.value, label: field.name);
+                  return DropdownMenuEntry<String>(
+                    value: field.value,
+                    label: field.name,
+                    style: ButtonStyle(
+                      textStyle: WidgetStatePropertyAll(theme.textTheme.bodyMedium)
+                    )
+                  );
                 }).toList(),
               ),
             ),
@@ -123,7 +124,11 @@ class _SortFormState extends BaseState<SortForm> {
                 },
                 leadingIcon: Icon(Icons.sort_by_alpha, size: 24),
                 dropdownMenuEntries: options.map<DropdownMenuEntry<String>>((OptionModel field) {
-                  return DropdownMenuEntry<String>(value: field.value, label: field.name);
+                  return DropdownMenuEntry<String>(
+                    value: field.value,
+                    label: field.name,
+                    style: ButtonStyle(textStyle: WidgetStatePropertyAll(theme.textTheme.bodyMedium)),
+                  );
                 }).toList(),
               ),
             ),
@@ -140,7 +145,7 @@ class _SortFormState extends BaseState<SortForm> {
               ),
               child: Center(
                 child: Text(localizations.sortDeviceCompletedButton,
-                    style: textTheme.titleLarge!.copyWith(color: Colors.white)),
+                    style: theme.textTheme.titleLarge!.copyWith(color: Colors.white)),
               ),
             )
           ],

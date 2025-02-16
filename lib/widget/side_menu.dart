@@ -15,7 +15,7 @@ class SideMenu extends StatefulWidget {
   final Function(String userName) onEditAccount;
   final Function(String userId) onSwitchAccount;
   final Function(String userId) onDeletedAccount;
-  SideMenu(
+  const SideMenu(
     this.user, {
     super.key,
     required this.onAddAccount,
@@ -39,12 +39,11 @@ class _SideMenuState extends BaseState<SideMenu> {
         color: AppColors.menuBackgroundColor,
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(18),
+            padding: EdgeInsets.symmetric(vertical: 18),
             child: Stack(
               children: [
                 Column(
                   children: [
-                    // buildAccountTile(widget.user, isCurrent: true),
                     AccountTile(
                       user: widget.user,
                       isCurrent: true,

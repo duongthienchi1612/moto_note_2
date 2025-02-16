@@ -6,7 +6,7 @@
   "deviceType": "Device Type",
   "lastReplacement": "Last Replacement",
   "nextReplacement": "Next Replacement",
-  "date": "Date",
+  "lastReplacementDate": "Date",
   "notes": "Additional Notes",
   "saveDevice": "Save Device",
   "deviceList": "Device List",

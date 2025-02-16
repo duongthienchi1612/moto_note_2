@@ -31,7 +31,6 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Dialog(
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.all(16),
@@ -52,7 +51,7 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
                         Align(
                             child: Text(
                                 widget.isAddNew ? localizations.addDeviceFormTitle : localizations.editDeviceFormTitle,
-                                style: textTheme.headlineMedium)),
+                                style: theme.textTheme.headlineMedium)),
                         Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
@@ -87,7 +86,7 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
                               // Device Type
                               Text(
                                 localizations.deviceType,
-                                style: textTheme.titleLarge,
+                                style: theme.textTheme.titleLarge,
                               ),
                               SizedBox(height: 8),
                               ListDeviceType(
@@ -99,37 +98,28 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
                                 },
                               ),
                               SizedBox(height: 16),
-                              // Last Replacement
-                              Row(
-                                children: [
-                                  // Last Replacement Km
-                                  Expanded(
-                                    child: CustomInputField(
-                                      label: localizations.lastReplacement,
-                                      value: state.model.lastReplacementKm?.toString() ?? '',
-                                      onChanged: (value) {
-                                        state.model.lastReplacementKm = int.tryParse(value);
-                                        bloc.add(OnChange(state.model));
-                                      },
-                                      maxLength: 5,
-                                      textInputType: TextInputType.number,
-                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  // Last Replacement Date
-                                  Expanded(
-                                    child: CustomDatePicker(
-                                        context: context,
-                                        label: localizations.date,
-                                        date: state.model.lastReplacementDate,
-                                        onChanged: (value) {
-                                          state.model.lastReplacementDate = value;
-                                          bloc.add(OnChange(state.model));
-                                        }),
-                                  ),
-                                ],
+                              // Last Replacement KM
+
+                              CustomInputField(
+                                label: localizations.lastReplacement,
+                                value: state.model.lastReplacementKm?.toString() ?? '',
+                                onChanged: (value) {
+                                  state.model.lastReplacementKm = int.tryParse(value);
+                                  bloc.add(OnChange(state.model));
+                                },
+                                maxLength: 5,
+                                textInputType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               ),
+                              // Last Replacement Date
+                              CustomDatePicker(
+                                  context: context,
+                                  label: localizations.lastReplacementDate,
+                                  date: state.model.lastReplacementDate,
+                                  onChanged: (value) {
+                                    state.model.lastReplacementDate = value;
+                                    bloc.add(OnChange(state.model));
+                                  }),
                               // Next Replacement
                               CustomInputField(
                                 label: localizations.nextReplacement,
@@ -170,7 +160,8 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
                                   side: BorderSide(color: Colors.transparent),
                                 ),
                                 child: Center(
-                                  child: Text(localizations.saveDevice, style: textTheme.titleLarge!.copyWith(color: Colors.white)),
+                                  child: Text(localizations.saveDevice,
+                                      style: theme.textTheme.titleLarge!.copyWith(color: Colors.white)),
                                 ),
                               )
                             ],

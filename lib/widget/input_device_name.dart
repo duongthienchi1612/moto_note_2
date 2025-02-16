@@ -40,7 +40,7 @@ class _InputDeviceNameState extends BaseState<InputDeviceName> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(localizations.deviceName, style: Theme.of(context).textTheme.titleLarge),
+        Text(localizations.deviceName, style: theme.textTheme.titleLarge),
         SizedBox(height: 8),
         LayoutBuilder(builder: (ctx, constraints) {
           return Autocomplete<String>(

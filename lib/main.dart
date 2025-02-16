@@ -7,7 +7,6 @@ import 'preference/user_reference.dart';
 import 'splash_screen.dart';
 import 'theme/app_text_theme.dart';
 import 'utilities/localization_helper.dart';
-import 'widget/side_menu.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
