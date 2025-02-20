@@ -14,6 +14,7 @@ import 'utilities/app_configuration.dart';
 import 'utilities/database_factory.dart';
 import 'utilities/localization_helper.dart';
 import 'utilities/static_var.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -91,10 +92,12 @@ class _SplashScreenState extends State<SplashScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(ImagePath.splash_screen),
-                  fit: BoxFit.cover,
+              color: Colors.white,
+              child: SafeArea(
+                child: Center(
+                  child: Lottie.asset(
+                    ImagePath.splash_screen,
+                  ),
                 ),
               ),
             );

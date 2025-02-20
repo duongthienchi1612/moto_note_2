@@ -23,9 +23,11 @@ class PreferenceKey {
 
 class ImagePath {
   ImagePath._();
-  static const splash_screen = 'assets/images/splash_screen.png';
   static const contermet = 'assets/images/contermet.png';
   static const background7 = 'assets/images/background7.png';
+  //lottie
+  static const splash_screen = 'assets/images/lottie/splash_screen.json';
+  static const delivery = 'assets/images/lottie/delivery.json';
 }
 
 class ScreenName {

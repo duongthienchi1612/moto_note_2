@@ -32,7 +32,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SwitchAccount>(_onSwitchAccount);
     on<EditAccount>(_onEditAccount);
     on<DeleteAccount>(_onDeleteAccount);
-    on<OpenMenu>(_onOpenMenu);
   }
 
   Future<void> _onLoadData(LoadData event, Emitter<HomeState> emit) async {
@@ -41,7 +40,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     currentKm = await userRef.getCurrentKm() ?? 0;
     final user = await usersRepository.getById(StaticVar.currentUserId);
     final users = (await usersRepository.listAll())!.where((e) => e.id != StaticVar.currentUserId).toList();
-    final model = HomeViewModel(data, currentKm, user!, users, false);
+    final model = HomeViewModel(data, currentKm, user!, users);
     emit(HomeLoaded(model));
   }
 
@@ -134,9 +133,4 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoaded(currentState.model));
   }
 
-  Future<void> _onOpenMenu(OpenMenu event, Emitter<HomeState> emit) async {
-    final currentState = state as HomeLoaded;
-    final model = currentState.model;
-    emit(HomeLoaded(model.copyWith(isMenuOpen: event.isOpen)));
-  }
 }

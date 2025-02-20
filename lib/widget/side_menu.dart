@@ -59,12 +59,12 @@ class _SideMenuState extends BaseState<SideMenu> {
                     const SizedBox(height: 16),
                   ],
                 ),
-                Positioned(
-                  bottom: 0,
-                  left: 30,
-                  right: 30,
-                  child: _buildBuyMeACoffeeButton(),
-                )
+                // Positioned(
+                //   bottom: 0,
+                //   left: 30,
+                //   right: 30,
+                //   child: _buildBuyMeACoffeeButton(),
+                // )
               ],
             ),
           ),

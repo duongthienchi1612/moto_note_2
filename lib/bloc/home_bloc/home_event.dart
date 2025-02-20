@@ -38,7 +38,3 @@ class DeleteAccount extends HomeEvent {
   final String userId;
   DeleteAccount(this.userId);
 }
-class OpenMenu extends HomeEvent {
-  final bool isOpen;
-  OpenMenu(this.isOpen);
-}

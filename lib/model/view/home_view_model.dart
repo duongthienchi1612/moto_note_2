@@ -6,12 +6,10 @@ class HomeViewModel {
   int currentKm;
   UserEntity currentUser;
   List<UserEntity> users;
-  bool isMenuOpen;
 
-  HomeViewModel(this.data, this.currentKm, this.currentUser, this.users, this.isMenuOpen);
+  HomeViewModel(this.data, this.currentKm, this.currentUser, this.users);
 
   HomeViewModel copyWith({
-    bool? isMenuOpen,
     List<DeviceEntity>? data,
     int? currentKm,
     UserEntity? currentUser,
@@ -22,7 +20,6 @@ class HomeViewModel {
       currentKm ?? this.currentKm,
       currentUser ?? this.currentUser,
       users ?? List.from(this.users),
-      isMenuOpen ?? this.isMenuOpen,
     );
   }
 }

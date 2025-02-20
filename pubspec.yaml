@@ -52,6 +52,7 @@ dependencies:
   uuid: ^4.5.1
   diacritic: ^0.1.6
   flame: ^1.25.0
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -87,6 +88,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/lottie/
     - assets/images/bike/
     - assets/images/bike/blue/
     - assets/images/bike/green/
