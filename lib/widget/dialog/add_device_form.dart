@@ -108,7 +108,7 @@ class _AddDeviceFormState extends BaseState<AddDeviceForm> {
                                   bloc.add(OnChange(state.model));
                                 },
                                 maxLength: 5,
-                                textInputType: TextInputType.number,
+                                textInputType: TextInputType.numberWithOptions(),
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               ),
                               // Last Replacement Date

@@ -111,7 +111,7 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
                   child: Transform.scale(
                     scale: scaleAnimation.value,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(22)),
+                      borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 22 : 0)),
                       child: GestureDetector(
                         onTap: () {
                           if (isMenuOpen) {
@@ -205,7 +205,10 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
                                       },
                                     ),
 
-                                    _gameWidget,
+                                    IgnorePointer(
+                                      ignoring: isMenuOpen,
+                                      child: _gameWidget,
+                                    ),
 
                                     // Device list
                                     BlocBuilder<HomeBloc, HomeState>(builder: (ctx, state) {
