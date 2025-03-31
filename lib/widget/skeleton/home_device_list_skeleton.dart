@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../base/base_widget.dart';
 
 class HomeDeviceListSkeleton extends BaseStatelessWidget {
-  HomeDeviceListSkeleton({
+  const HomeDeviceListSkeleton({
     super.key,
   });
 
@@ -14,7 +14,7 @@ class HomeDeviceListSkeleton extends BaseStatelessWidget {
           children: [
             SizedBox(width: 8),
             Text(
-              localizations.deviceList,
+              localizations(context).deviceList,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             Spacer(),

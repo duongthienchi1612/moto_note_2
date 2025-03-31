@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
 import 'home_screen.dart';
@@ -12,17 +13,14 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp(initialLanguage: await UserReference().getLanguage() ?? 'vi'));
-  initLocalization();
-}
-
-void initLocalization() {
-  final context = navigatorKey.currentContext;
-  if (context != null) {
-    LocalizationHelper.init(AppLocalizations.of(context)!);
-  } else {
-    Future.delayed(Duration.zero, initLocalization);
-  }
+  
+  // Đọc ngôn ngữ từ SharedPreferences trực tiếp
+  final prefs = await SharedPreferences.getInstance();
+  final currentUserId = await prefs.getString(PreferenceKey.currentUserId);
+  final languageKey = '${currentUserId}_${PreferenceKey.language}';
+  final initialLanguage = prefs.getString(languageKey) ?? 'vi';
+  
+  runApp(MyApp(initialLanguage: initialLanguage));
 }
 
 class MyApp extends StatefulWidget {
@@ -42,10 +40,16 @@ class _MyAppState extends State<MyApp> {
     _locale = Locale(widget.initialLanguage);
   }
 
-  void _changeLanguage(String languageCode) {
+  void _changeLanguage(String languageCode) async {
     setState(() {
       _locale = Locale(languageCode);
     });
+    
+    // Lưu ngôn ngữ mới vào SharedPreferences trực tiếp
+    final prefs = await SharedPreferences.getInstance();
+    final currentUserId = await prefs.getString(PreferenceKey.currentUserId);
+    final languageKey = '${currentUserId}_${PreferenceKey.language}';
+    await prefs.setString(languageKey, languageCode);
   }
 
   @override
@@ -59,6 +63,14 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         textTheme: AppTextTheme.textTheme,
       ),
+      builder: (context, child) {
+        // Khởi tạo LocalizationHelper khi AppLocalizations đã sẵn sàng
+        final localizations = AppLocalizations.of(context);
+        if (localizations != null) {
+          LocalizationHelper.localizations = localizations;
+        }
+        return child!;
+      },
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),

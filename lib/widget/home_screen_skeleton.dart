@@ -38,7 +38,7 @@ class HomeScreenSkeleton extends BaseStatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              localizations.currentKm,
+                              localizations(context).currentKm,
                               style: textTheme.titleMedium!.copyWith(color: Colors.white),
                             ),
                             TweenAnimationBuilder(
@@ -64,7 +64,7 @@ class HomeScreenSkeleton extends BaseStatelessWidget {
                     children: [
                       SizedBox(width: 8),
                       Text(
-                        localizations.deviceList,
+                        localizations(context).deviceList,
                         style: textTheme.headlineSmall,
                       ),
                       Spacer(),

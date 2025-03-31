@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../dependencies.dart';
 import '../../preference/user_reference.dart';
-import '../../utilities/localization_helper.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 abstract class BaseStatelessWidget extends StatelessWidget {
-  BaseStatelessWidget({super.key});
-  final localizations = LocalizationHelper.instance;
+  const BaseStatelessWidget({super.key});
+  AppLocalizations localizations(BuildContext context) => AppLocalizations.of(context)!;
 }
 
 abstract class BaseState<T extends StatefulWidget> extends State<T> {
-  final localizations = LocalizationHelper.instance;
+  AppLocalizations get localizations => AppLocalizations.of(context)!;
   final userRef = injector.get<UserReference>();
   ThemeData get theme => Theme.of(context);
 }

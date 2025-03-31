@@ -1,5 +1,6 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../constants.dart';
 import '../model/user_entity.dart';
@@ -12,9 +13,11 @@ class SideMenu extends StatefulWidget {
   final UserEntity user;
   final List<UserEntity> users;
   final Function(String userName) onAddAccount;
-  final Function(String userName) onEditAccount;
+  final Function(String userId, String userName) onEditAccount;
   final Function(String userId) onSwitchAccount;
   final Function(String userId) onDeletedAccount;
+  final Function(String)? changeLanguage;
+  
   const SideMenu(
     this.user, {
     super.key,
@@ -23,6 +26,7 @@ class SideMenu extends StatefulWidget {
     required this.onSwitchAccount,
     required this.onDeletedAccount,
     required this.users,
+    this.changeLanguage,
   });
 
   @override
@@ -32,39 +36,66 @@ class SideMenu extends StatefulWidget {
 class _SideMenuState extends BaseState<SideMenu> {
   @override
   Widget build(BuildContext context) {
+    // Lấy kích thước màn hình để thiết kế responsive
+    final screenSize = MediaQuery.of(context).size;
+    final maxWidth = screenSize.width * 0.85; // Giới hạn width tối đa 85% màn hình
+    final menuWidth = maxWidth < 288.0 ? maxWidth : 288.0;
+    
     return Scaffold(
       body: Container(
-        width: 288,
+        width: menuWidth,
         height: double.infinity,
         color: AppColors.menuBackgroundColor,
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 18),
-            child: Stack(
+            padding: EdgeInsets.fromLTRB(16, 32, 16, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    AccountTile(
-                      user: widget.user,
-                      isCurrent: true,
-                      onEditAccount: widget.onEditAccount,
-                      onSwitchAccount: widget.onSwitchAccount,
-                      onDeleted: (_) {},
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          localizations.appTitle,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
-                    const Divider(),
-                    const SizedBox(height: 16),
-                    _buildAccountList(),
-                    const SizedBox(height: 16),
-                    _buildAddAccountButton(),
-                    const SizedBox(height: 16),
+                    if (widget.changeLanguage != null)
+                      _buildLanguageIcon(),
                   ],
                 ),
-                // Positioned(
-                //   bottom: 0,
-                //   left: 30,
-                //   right: 30,
-                //   child: _buildBuyMeACoffeeButton(),
-                // )
+                SizedBox(height: 24),
+                AccountTile(
+                  user: widget.user,
+                  isCurrent: true,
+                  onEditAccount: widget.onEditAccount,
+                  onSwitchAccount: widget.onSwitchAccount,
+                  onDeleted: (_) {},
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Divider(color: Colors.white24, thickness: 1),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, bottom: 12.0),
+                  child: Text(
+                    localizations.otherAccounts,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                _buildAccountList(),
+                _buildAddAccountButton(),
               ],
             ),
           ),
@@ -73,22 +104,115 @@ class _SideMenuState extends BaseState<SideMenu> {
     );
   }
 
+  Widget _buildLanguageIcon() {
+    return Material(
+      color: Colors.white.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(30),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(30),
+        onTap: () => _showLanguageSelector(),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(
+            Icons.language,
+            color: Colors.white,
+            size: 24,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageSelector() {
+    final currentLocale = Localizations.localeOf(context).languageCode;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            localizations.selectLanguage,
+            style: TextStyle(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption('Tiếng Việt', 'vi', currentLocale == 'vi'),
+              SizedBox(height: 8),
+              _buildLanguageOption('English', 'en', currentLocale == 'en'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageOption(String languageName, String languageCode, bool isSelected) {
+    return Material(
+      color: isSelected ? Colors.blue.shade50 : Colors.transparent,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          if (widget.changeLanguage != null) {
+            widget.changeLanguage!(languageCode);
+            Navigator.pop(context);
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  languageName,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? Colors.blue.shade700 : Colors.black87,
+                  ),
+                ),
+              ),
+              if (isSelected)
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.blue.shade700,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildAccountList() {
+    final otherUsers = widget.users
+        .where((account) => account.userName != widget.user.userName)
+        .toList();
+        
     return Flexible(
-      child: ListView(
-        shrinkWrap: true,
-        children: widget.users
-            .where((account) => account.userName != widget.user.userName)
-            .map(
-              (account) => AccountTile(
-                user: account,
-                onEditAccount: widget.onEditAccount,
-                onSwitchAccount: widget.onSwitchAccount,
-                onDeleted: widget.onDeletedAccount,
+      child: otherUsers.isEmpty
+          ? Center(
+              child: Text(
+                localizations.noOtherAccounts,
+                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white60),
               ),
             )
-            .toList(),
-      ),
+          : ListView(
+              shrinkWrap: true,
+              children: otherUsers
+                  .map(
+                    (account) => AccountTile(
+                      user: account,
+                      onEditAccount: widget.onEditAccount,
+                      onSwitchAccount: widget.onSwitchAccount,
+                      onDeleted: widget.onDeletedAccount,
+                    ),
+                  )
+                  .toList(),
+            ),
     );
   }
 
@@ -113,26 +237,6 @@ class _SideMenuState extends BaseState<SideMenu> {
             style: theme.textTheme.labelLarge!.copyWith(color: Colors.white),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBuyMeACoffeeButton() {
-    return ElevatedButton.icon(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.buyMeACoffeColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        elevation: 1,
-      ),
-      icon: Icon(Icons.coffee, size: 24),
-      label: Text(
-        localizations.buyMeACoffee,
-        style: theme.textTheme.labelLarge,
       ),
     );
   }

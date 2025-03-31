@@ -110,7 +110,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final currentState = state as HomeLoaded;
     final model = currentState.model;
 
-    final user = await usersRepository.getById(StaticVar.currentUserId);
+    final user = await usersRepository.getById(event.userId);
     user!.userName = event.userName;
     await usersRepository.update(user);
 

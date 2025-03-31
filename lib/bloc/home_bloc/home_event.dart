@@ -26,8 +26,9 @@ class AddAccount extends HomeEvent {
 }
 
 class EditAccount extends HomeEvent {
+  final String userId;
   final String userName;
-  EditAccount(this.userName);
+  EditAccount(this.userId, this.userName);
 }
 
 class SwitchAccount extends HomeEvent {

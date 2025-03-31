@@ -1,107 +1,168 @@
-import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../constants.dart';
 import '../model/user_entity.dart';
+import '../theme/app_colors.dart';
 import 'base/base_widget.dart';
 import 'dialog/add_user_form.dart';
 
 class AccountTile extends StatefulWidget {
-  UserEntity user;
-  bool isCurrent;
-  Function(String) onDeleted;
-  Function(String) onEditAccount;
-  Function(String) onSwitchAccount;
-  AccountTile(
-      {super.key,
-      required this.user,
-      required this.onSwitchAccount,
-      required this.onDeleted,
-      required this.onEditAccount,
-      this.isCurrent = false});
+  final UserEntity user;
+  final bool isCurrent;
+  final Function(String userId) onDeleted;
+  final Function(String userId) onSwitchAccount;
+  final Function(String userId, String userName) onEditAccount;
+
+  const AccountTile({
+    super.key,
+    required this.user,
+    this.isCurrent = false,
+    required this.onDeleted,
+    required this.onSwitchAccount,
+    required this.onEditAccount,
+  });
 
   @override
   State<AccountTile> createState() => _AccountTileState();
 }
 
 class _AccountTileState extends BaseState<AccountTile> {
-  double dx = 0;
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        setState(() {
-          dx = details.primaryDelta! + dx;
-          if (dx < Constants.offsetShowIconDeleted) {
-            dx = Constants.offsetShowIconDeleted;
-          }
-          if (dx > 0) {
-            dx = 0;
-          }
-        });
-      },
-      onHorizontalDragEnd: (_) {
-        if (dx > Constants.offsetShowIconDeleted) {
-          setState(() => dx = 0);
-        }
-      },
-      onTap: () async {
-        if (!widget.isCurrent) {
-          widget.onSwitchAccount(widget.user.id!);
-        } else {
-          final value = await showDialog(
-            context: context,
-            builder: (_) => AddUserForm(
-              userName: widget.user.userName,
-            ),
-          );
-          if (StringUtils.isNotNullOrEmpty(value)) {
-            widget.onEditAccount(value);
-          }
-        }
-      },
-      child: Stack(
-        alignment: Alignment.centerRight,
-        children: [
-          if (!widget.isCurrent)
-            Visibility(
-              visible: dx <= Constants.offsetShowIconDeleted,
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 180),
-                child: IconButton(
-                  style: OutlinedButton.styleFrom(
-                    iconSize: 18,
-                    backgroundColor: Colors.red,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Material(
+        color: widget.isCurrent ? Colors.blue.withOpacity(0.2) : Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: widget.isCurrent ? null : () => widget.onSwitchAccount(widget.user.id!),
+          splashColor: Colors.white.withOpacity(0.1),
+          highlightColor: Colors.white.withOpacity(0.05),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppColors.waveColorMedium,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: widget.isCurrent ? Colors.white : Colors.transparent,
+                      width: 2,
+                    ),
                   ),
-                  icon: Icon(Icons.delete, color: Colors.white),
-                  onPressed: () {
-                    setState(() {
-                      dx = 0;
-                    });
-                    widget.onDeleted(widget.user.id!);
-                  },
+                  child: Center(
+                    child: Text(
+                      widget.user.userName != null && widget.user.userName!.isNotEmpty
+                          ? widget.user.userName![0].toUpperCase()
+                          : 'A',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.user.userName ?? '',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (widget.isCurrent)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade700,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              localizations.current,
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (!widget.isCurrent)
+                  IconButton(
+                    icon: Icon(Icons.delete_outline, color: Colors.white),
+                    onPressed: () => _showDeleteConfirmation(),
+                  ),
+                IconButton(
+                  icon: Icon(Icons.edit_outlined, color: Colors.white),
+                  onPressed: () => _onEdit(),
+                ),
+              ],
             ),
-          AnimatedContainer(
-            duration: Duration(milliseconds: 180),
-            transform: Matrix4.translationValues(dx, 0, 0),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.white24,
-                child: Icon(widget.isCurrent ? Icons.face_6 : Icons.person, color: Colors.white),
-              ),
-              title: Text(
-                widget.user.userName!,
-                style: theme.textTheme.headlineSmall!.copyWith(color: Colors.white),
-              ),
-              contentPadding: EdgeInsets.only(left: 16),
-              trailing: widget.isCurrent ? const Icon(Icons.check, color: Colors.white) : null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation() {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          localizations.deleteAccount,
+          style: TextStyle(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          '${localizations.deleteAccountConfirmation} "${widget.user.userName}"?',
+          style: TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              localizations.cancel,
+              style: TextStyle(color: Colors.grey.shade700),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              widget.onDeleted(widget.user.id!);
+            },
+            child: Text(
+              localizations.delete,
+              style: TextStyle(color: Colors.red),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _onEdit() async {
+    final value = await showDialog(
+      context: context,
+      builder: (_) => AddUserForm(userName: widget.user.userName ?? '', isAddNew: false),
+    );
+    if (value != null) {
+      widget.onEditAccount(widget.user.id!, value);
+    }
   }
 }

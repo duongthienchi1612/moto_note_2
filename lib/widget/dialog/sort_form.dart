@@ -14,14 +14,23 @@ class SortForm extends StatefulWidget {
 }
 
 class _SortFormState extends BaseState<SortForm> {
-  late List<OptionModel> fields, options;
+  late List<OptionModel> fields;
+  late List<OptionModel> options;
 
-  late String fieldValue, optionValue;
+  String? fieldValue;
+  String? optionValue;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initializeData();
+      _initialized = true;
+    }
+  }
 
+  void _initializeData() {
     fields = [
       OptionModel(localizations.fieldName, SortField.name),
       OptionModel(localizations.fieldLastReplacementKm, SortField.lastKm),
@@ -39,6 +48,12 @@ class _SortFormState extends BaseState<SortForm> {
 
   @override
   Widget build(BuildContext context) {
+    // Phòng ngừa trường hợp build được gọi trước khi didChangeDependencies
+    if (!_initialized) {
+      _initializeData();
+      _initialized = true;
+    }
+
     return Dialog(
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.all(16),
@@ -87,12 +102,9 @@ class _SortFormState extends BaseState<SortForm> {
                 leadingIcon: Icon(Icons.text_fields, size: 24),
                 dropdownMenuEntries: fields.map<DropdownMenuEntry<String>>((OptionModel field) {
                   return DropdownMenuEntry<String>(
-                    value: field.value,
-                    label: field.name,
-                    style: ButtonStyle(
-                      textStyle: WidgetStatePropertyAll(theme.textTheme.bodyMedium)
-                    )
-                  );
+                      value: field.value,
+                      label: field.name,
+                      style: ButtonStyle(textStyle: WidgetStatePropertyAll(theme.textTheme.bodyMedium)));
                 }).toList(),
               ),
             ),
@@ -135,7 +147,7 @@ class _SortFormState extends BaseState<SortForm> {
             SizedBox(height: 24),
             OutlinedButton(
               onPressed: () async {
-                final OptionModel model = OptionModel(fieldValue, optionValue);
+                final OptionModel model = OptionModel(fieldValue!, optionValue!);
                 Navigator.pop(context, model);
               },
               style: OutlinedButton.styleFrom(

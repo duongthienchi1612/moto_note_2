@@ -1,0 +1,48 @@
+-- Cập nhật dịch tiếng Anh cho accessories_type
+UPDATE accessories_type SET name_en = 'Tire & Wheel System' WHERE id = 1;
+UPDATE accessories_type SET name_en = 'Engine System' WHERE id = 2;
+UPDATE accessories_type SET name_en = 'Transmission System' WHERE id = 3;
+UPDATE accessories_type SET name_en = 'Fuel System' WHERE id = 4;
+UPDATE accessories_type SET name_en = 'Electrical & Lighting System' WHERE id = 5;
+UPDATE accessories_type SET name_en = 'Chassis & Suspension System' WHERE id = 6;
+UPDATE accessories_type SET name_en = 'Other Parts' WHERE id = 7;
+
+-- Cập nhật dịch tiếng Anh cho accessories
+UPDATE accessories SET name_en = 'Front Tire' WHERE id = 1;
+UPDATE accessories SET name_en = 'Rear Tire' WHERE id = 2;
+UPDATE accessories SET name_en = 'Wheel Hub' WHERE id = 3;
+UPDATE accessories SET name_en = 'Wheel Rim' WHERE id = 4;
+UPDATE accessories SET name_en = 'Front Brake (Disc/Drum)' WHERE id = 5;
+UPDATE accessories SET name_en = 'Rear Brake (Disc/Drum)' WHERE id = 6;
+UPDATE accessories SET name_en = 'Engine Oil' WHERE id = 7;
+UPDATE accessories SET name_en = 'Oil Filter' WHERE id = 8;
+UPDATE accessories SET name_en = 'Air Filter' WHERE id = 9;
+UPDATE accessories SET name_en = 'Spark Plug' WHERE id = 10;
+UPDATE accessories SET name_en = 'Spark Plug Wire' WHERE id = 11;
+UPDATE accessories SET name_en = 'Camshaft' WHERE id = 12;
+UPDATE accessories SET name_en = 'Valve' WHERE id = 13;
+UPDATE accessories SET name_en = 'Belt' WHERE id = 14;
+UPDATE accessories SET name_en = 'Chain and Sprocket' WHERE id = 15;
+UPDATE accessories SET name_en = 'Gearbox' WHERE id = 16;
+UPDATE accessories SET name_en = 'Front Clutch' WHERE id = 17;
+UPDATE accessories SET name_en = 'Rear Clutch' WHERE id = 18;
+UPDATE accessories SET name_en = 'Carburetor' WHERE id = 19;
+UPDATE accessories SET name_en = 'Fuel Injector (FI)' WHERE id = 20;
+UPDATE accessories SET name_en = 'Fuel Pump' WHERE id = 21;
+UPDATE accessories SET name_en = 'Fuel Line' WHERE id = 22;
+UPDATE accessories SET name_en = 'Battery' WHERE id = 23;
+UPDATE accessories SET name_en = 'Headlight' WHERE id = 24;
+UPDATE accessories SET name_en = 'Taillight' WHERE id = 25;
+UPDATE accessories SET name_en = 'Turn Signal' WHERE id = 26;
+UPDATE accessories SET name_en = 'Display Console' WHERE id = 27;
+UPDATE accessories SET name_en = 'Horn' WHERE id = 28;
+UPDATE accessories SET name_en = 'Speed Sensor' WHERE id = 29;
+UPDATE accessories SET name_en = 'Front Fork' WHERE id = 30;
+UPDATE accessories SET name_en = 'Rear Shock' WHERE id = 31;
+UPDATE accessories SET name_en = 'Steering Head Bearing' WHERE id = 32;
+UPDATE accessories SET name_en = 'Swingarm' WHERE id = 33;
+UPDATE accessories SET name_en = 'Handlebar' WHERE id = 34;
+UPDATE accessories SET name_en = 'Seat' WHERE id = 35;
+UPDATE accessories SET name_en = 'Footrest' WHERE id = 36;
+UPDATE accessories SET name_en = 'Center Stand' WHERE id = 37;
+UPDATE accessories SET name_en = 'Side Stand' WHERE id = 38; 

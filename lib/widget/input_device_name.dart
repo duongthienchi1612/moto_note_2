@@ -1,6 +1,8 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
+import '../model/master_data/accessory_entity.dart';
+import '../utilities/localization_helper.dart';
 import 'base/base_widget.dart';
 
 class InputDeviceName extends StatefulWidget {
@@ -12,7 +14,7 @@ class InputDeviceName extends StatefulWidget {
     this.deviceName,
   });
   final String? deviceName;
-  final List<String> accessories;
+  final List<AccessoryEntity> accessories;
   final Function(String) onChanged;
   final Function(dynamic) onSelected;
 
@@ -22,11 +24,21 @@ class InputDeviceName extends StatefulWidget {
 
 class _InputDeviceNameState extends BaseState<InputDeviceName> {
   late TextEditingController _controller;
+  late List<String> _localizedAccessoryNames;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.deviceName ?? '');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Cập nhật danh sách tên theo ngôn ngữ hiện tại
+    _localizedAccessoryNames = widget.accessories
+        .map((accessory) => accessory.getLocalizedName(context))
+        .toList();
   }
 
   @override
@@ -49,13 +61,12 @@ class _InputDeviceNameState extends BaseState<InputDeviceName> {
                 return const Iterable<String>.empty();
               }
               final input = removeDiacritics(textEditingValue.text.toLowerCase());
-              return widget.accessories.where(
+              return _localizedAccessoryNames.where(
                 (String option) {
                   return removeDiacritics(option.toLowerCase()).contains(input);
                 },
               );
             },
-            // onSelected: widget.onSelected,
             onSelected: (String selectedValue) {
                 setState(() {
                   _controller.text = selectedValue;

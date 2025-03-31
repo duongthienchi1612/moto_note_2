@@ -1,5 +1,6 @@
 {
   "appName": "Moto Note",
+  "appTitle": "Moto Note",
   "addDeviceFormTitle": "Add Device",
   "editDeviceFormTitle": "Edit Device",
   "deviceName": "Device Name",
@@ -28,5 +29,17 @@
   "addUserNameFormTitle": "User Name",
   "save": "Save",
   "add": "Add",
+  "otherAccounts": "Other Accounts",
+  "language": "Language",
+  "current": "Current",
+  "selectLanguage": "Select Language",
+  "tapToAddNewDevice": "Tap + button to add new device",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirmation": "Are you sure you want to delete account",
+  "deleteDevice": "Delete Device",
+  "deleteDeviceConfirmation": "Are you sure you want to delete device",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "noOtherAccounts": "No other accounts",
   "end": "end"
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'widget/base/base_widget.dart';
 
 class EmptyDeviceList extends BaseStatelessWidget {
-  EmptyDeviceList({
+  const EmptyDeviceList({
     super.key,
   });
 
@@ -12,7 +12,7 @@ class EmptyDeviceList extends BaseStatelessWidget {
       hasScrollBody: false,
       child: Center(
           child: Text(
-        localizations.deviceListEmpty,
+        localizations(context).deviceListEmpty,
         style: Theme.of(context).textTheme.headlineSmall,
       )),
     );

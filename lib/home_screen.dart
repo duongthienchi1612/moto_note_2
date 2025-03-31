@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'bloc/home_bloc/home_bloc.dart';
 import 'dependencies.dart';
 import 'model/option_model.dart';
+import 'preference/user_reference.dart';
 import 'theme/app_colors.dart';
 import 'widget/animated_background.dart';
 import 'widget/base/base_widget.dart';
@@ -30,6 +31,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMixin {
   final bloc = injector.get<HomeBloc>();
+  final _userReference = injector.get<UserReference>();
 
   late final Widget _gameWidget;
 
@@ -62,6 +64,14 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
     );
   }
 
+  // Hàm xử lý khi thay đổi ngôn ngữ
+  void _handleLanguageChange(String languageCode) {
+    // Lưu ngôn ngữ vào SharedPreferences
+    _userReference.setLanguage(languageCode);
+    // Gọi callback để thay đổi ngôn ngữ
+    widget.changeLanguage(languageCode);
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -89,10 +99,11 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
                       child: SideMenu(
                         state.model.currentUser,
                         users: state.model.users,
-                        onEditAccount: (value) => bloc.add(EditAccount(value)),
+                        onEditAccount: (userId, value) => bloc.add(EditAccount(userId, value)),
                         onAddAccount: (value) => bloc.add(AddAccount(value)),
                         onSwitchAccount: (value) => bloc.add(SwitchAccount(value)),
                         onDeletedAccount: (value) => bloc.add(DeleteAccount(value)),
+                        changeLanguage: _handleLanguageChange,
                       ),
                     );
                   } else {
@@ -126,78 +137,111 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
                           child: Stack(
                             children: [
                               AnimatedWaveBackground(),
-                              SingleChildScrollView(
+                              SafeArea(
                                 child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
+                                  children: [
                                     // App bar
-                                    SizedBox(height: MediaQuery.of(context).padding.top),
                                     BlocBuilder<HomeBloc, HomeState>(
                                       builder: (context, state) {
                                         if (state is HomeLoaded) {
-                                          return Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  if (!isMenuOpen) {
-                                                    _animationController.forward();
-                                                  } else {
-                                                    _animationController.reverse();
-                                                  }
-                                                  setState(() {
-                                                    isMenuOpen = !isMenuOpen;
-                                                  });
-                                                  // bloc.add(OpenMenu(!state.model.isMenuOpen));
-                                                },
-                                                icon: Icon(
-                                                  Icons.menu,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () async {
-                                                  final value = await showDialog(
-                                                    context: context,
-                                                    builder: (_) {
-                                                      return EditCurrentKmForm(currentKm: state.model.currentKm);
-                                                    },
-                                                  );
-                                                  if (value != null) {
-                                                    bloc.add(UpdateCurrentKm(value));
-                                                  }
-                                                },
-                                                child: Container(
-                                                  width: 184,
-                                                  padding: EdgeInsets.all(4),
-                                                  margin: EdgeInsets.symmetric(horizontal: 8),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.black, borderRadius: BorderRadius.circular(22)),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        localizations.currentKm,
-                                                        style:
-                                                            theme.textTheme.titleMedium!.copyWith(color: Colors.white),
-                                                      ),
-                                                      TweenAnimationBuilder(
-                                                        tween: IntTween(begin: 0, end: state.model.currentKm),
-                                                        curve: Curves.easeInOutCirc,
-                                                        duration: Duration(milliseconds: 600),
-                                                        builder: (context, value, child) {
-                                                          return Text(
-                                                            ' $value',
-                                                            style: theme.textTheme.titleMedium!
-                                                                .copyWith(color: Colors.white),
-                                                          );
-                                                        },
-                                                      ),
-                                                    ],
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    if (!isMenuOpen) {
+                                                      _animationController.forward();
+                                                    } else {
+                                                      _animationController.reverse();
+                                                    }
+                                                    setState(() {
+                                                      isMenuOpen = !isMenuOpen;
+                                                    });
+                                                  },
+                                                  icon: AnimatedIcon(
+                                                    icon: AnimatedIcons.menu_close,
+                                                    progress: _animationController,
+                                                    color: Colors.black87,
+                                                    size: 28,
                                                   ),
                                                 ),
-                                              )
-                                            ],
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    final value = await showDialog(
+                                                      context: context,
+                                                      builder: (_) {
+                                                        return EditCurrentKmForm(currentKm: state.model.currentKm);
+                                                      },
+                                                    );
+                                                    if (value != null) {
+                                                      bloc.add(UpdateCurrentKm(value));
+                                                    }
+                                                  },
+                                                  child: LayoutBuilder(builder: (context, constraints) {
+                                                    final screenWidth = MediaQuery.of(context).size.width;
+                                                    final isSmallScreen = screenWidth < 360;
+                                                    
+                                                    return Container(
+                                                      padding: EdgeInsets.symmetric(
+                                                        vertical: isSmallScreen ? 8 : 10,
+                                                        horizontal: isSmallScreen ? 12 : 16
+                                                      ),
+                                                      constraints: BoxConstraints(
+                                                        minWidth: isSmallScreen ? 120 : 150,
+                                                        maxWidth: MediaQuery.of(context).size.width * 0.5,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        gradient: LinearGradient(
+                                                          colors: [Colors.blue.shade800, Colors.blue.shade600],
+                                                          begin: Alignment.topLeft,
+                                                          end: Alignment.bottomRight,
+                                                        ),
+                                                        borderRadius: BorderRadius.circular(22),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.blue.shade300.withOpacity(0.4),
+                                                            blurRadius: 10,
+                                                            offset: Offset(0, 4),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Text(
+                                                            isSmallScreen ? 'Km:' : localizations.currentKm,
+                                                            style: theme.textTheme.titleMedium!.copyWith(
+                                                              color: Colors.white,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: isSmallScreen ? 13 : null,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 4),
+                                                          TweenAnimationBuilder(
+                                                            tween: IntTween(begin: 0, end: state.model.currentKm),
+                                                            curve: Curves.easeInOutCirc,
+                                                            duration: Duration(milliseconds: 600),
+                                                            builder: (context, value, child) {
+                                                              return Text(
+                                                                '$value',
+                                                                style: theme.textTheme.titleMedium!.copyWith(
+                                                                  color: Colors.white,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  fontSize: isSmallScreen ? 13 : null,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }),
+                                                )
+                                              ],
+                                            ),
                                           );
                                         } else {
                                           return HomeAppbarSkeleton();
@@ -205,74 +249,111 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
                                       },
                                     ),
 
-                                    IgnorePointer(
-                                      ignoring: isMenuOpen,
-                                      child: _gameWidget,
-                                    ),
+                                    Expanded(
+                                      child: ListView(
+                                        physics: BouncingScrollPhysics(),
+                                        children: [
+                                          // Animation
+                                          IgnorePointer(
+                                            ignoring: isMenuOpen,
+                                            child: _gameWidget,
+                                          ),
 
-                                    // Device list
-                                    BlocBuilder<HomeBloc, HomeState>(builder: (ctx, state) {
-                                      if (state is HomeLoaded) {
-                                        return Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                SizedBox(width: 8),
-                                                Text(
-                                                  localizations.deviceList,
-                                                  style: theme.textTheme.headlineSmall,
-                                                ),
-                                                Spacer(),
-                                                // Sort
-                                                IconButton(
-                                                    onPressed: () async {
-                                                      final value = await showDialog<OptionModel>(
-                                                        context: context,
-                                                        builder: (_) {
-                                                          return SortForm();
-                                                        },
-                                                      );
-                                                      if (value != null) {
-                                                        bloc.add(SortData(value));
-                                                      }
-                                                    },
-                                                    icon: Icon(Icons.sort))
-                                              ],
-                                            ),
-                                            if (state.model.data.isNotEmpty) ...[
-                                              IgnorePointer(
-                                                ignoring: isMenuOpen,
-                                                child: ListView.builder(
-                                                  shrinkWrap: true,
-                                                  padding: EdgeInsets.zero,
-                                                  physics: NeverScrollableScrollPhysics(),
-                                                  itemCount: state.model.data.length,
-                                                  itemBuilder: (ctx, index) {
-                                                    return DeviceItemCard(
-                                                      item: state.model.data[index],
-                                                      currentKm: state.model.currentKm,
-                                                      deletedItem: (item) => bloc.add(DeleteItem(item.id!)),
-                                                      onChanged: () => bloc.add(LoadData()),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              SizedBox(height: 48),
-                                            ] else
-                                              Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(top: 120),
-                                                  child: Text(
-                                                    localizations.deviceListEmpty,
-                                                    style: theme.textTheme.headlineSmall,
+                                          // Device list
+                                          BlocBuilder<HomeBloc, HomeState>(builder: (ctx, state) {
+                                            if (state is HomeLoaded) {
+                                              return Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          localizations.deviceList,
+                                                          style: theme.textTheme.headlineSmall!.copyWith(
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        // Sort
+                                                        Material(
+                                                          color: Colors.grey.shade200,
+                                                          borderRadius: BorderRadius.circular(12),
+                                                          child: InkWell(
+                                                            borderRadius: BorderRadius.circular(12),
+                                                            onTap: () async {
+                                                              final value = await showDialog<OptionModel>(
+                                                                context: context,
+                                                                builder: (_) {
+                                                                  return SortForm();
+                                                                },
+                                                              );
+                                                              if (value != null) {
+                                                                bloc.add(SortData(value));
+                                                              }
+                                                            },
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.all(4.0),
+                                                              child: Icon(Icons.sort, color: Colors.grey.shade700),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                          ],
-                                        );
-                                      }
-                                      return HomeDeviceListSkeleton();
-                                    })
+                                                  SizedBox(height: 8),
+                                                  if (state.model.data.isNotEmpty) ...[
+                                                    IgnorePointer(
+                                                      ignoring: isMenuOpen,
+                                                      child: ListView.builder(
+                                                        shrinkWrap: true,
+                                                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
+                                                        physics: NeverScrollableScrollPhysics(),
+                                                        itemCount: state.model.data.length,
+                                                        itemBuilder: (ctx, index) {
+                                                          return DeviceItemCard(
+                                                            item: state.model.data[index],
+                                                            currentKm: state.model.currentKm,
+                                                            deletedItem: (item) => bloc.add(DeleteItem(item.id!)),
+                                                            onChanged: () => bloc.add(LoadData()),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 80),
+                                                  ] else
+                                                    Center(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(top: 80),
+                                                        child: Column(
+                                                          children: [
+                                                            Text(
+                                                              localizations.deviceListEmpty,
+                                                              style: theme.textTheme.titleLarge!.copyWith(
+                                                                color: Colors.grey.shade600,
+                                                                fontWeight: FontWeight.w500,
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 16),
+                                                            Text(
+                                                              localizations.tapToAddNewDevice,
+                                                              textAlign: TextAlign.center,
+                                                              style: theme.textTheme.bodyMedium!.copyWith(
+                                                                color: Colors.grey.shade500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              );
+                                            }
+                                            return HomeDeviceListSkeleton();
+                                          })
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -294,8 +375,10 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
                   child: Transform.translate(
                     offset: Offset(0, 4),
                     child: FloatingActionButton(
-                      shape: CircleBorder(),
-                      mini: true,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 4,
                       onPressed: () async {
                         await showDialog(
                           context: context,
@@ -305,7 +388,7 @@ class _HomeScreenState extends BaseState<HomeScreen> with TickerProviderStateMix
                         );
                         bloc.add(LoadData());
                       },
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.blue.shade600,
                       child: const Icon(Icons.add, size: 30),
                     ),
                   ),

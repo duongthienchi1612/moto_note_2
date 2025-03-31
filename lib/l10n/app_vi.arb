@@ -1,5 +1,6 @@
 {
-  "appName": "Nhật ký mô tô",
+  "appName": "Nhật ký xe máy",
+  "appTitle": "Nhật ký xe máy",
   "addDeviceFormTitle": "Thêm thiết bị",
   "editDeviceFormTitle": "Chỉnh sửa",
   "deviceName": "Tên thiết bị",
@@ -28,5 +29,17 @@
   "addUserNameFormTitle": "Tên xe",
   "save": "Lưu",
   "add": "Thêm",
+  "otherAccounts": "Tài khoản khác",
+  "language": "Ngôn ngữ",
+  "current": "Hiện tại",
+  "selectLanguage": "Chọn ngôn ngữ",
+  "tapToAddNewDevice": "Nhấn vào nút + để thêm thiết bị mới",
+  "deleteAccount": "Xóa tài khoản",
+  "deleteAccountConfirmation": "Bạn có chắc chắn muốn xóa tài khoản",
+  "deleteDevice": "Xóa thiết bị",
+  "deleteDeviceConfirmation": "Bạn có chắc chắn muốn xóa thiết bị",
+  "cancel": "Hủy",
+  "delete": "Xóa",
+  "noOtherAccounts": "Không có tài khoản khác",
   "end": "end"
 }

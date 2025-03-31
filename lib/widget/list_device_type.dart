@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../model/master_data/accessory_type_entity.dart';
+import '../utilities/localization_helper.dart';
 
 class ListDeviceType extends StatelessWidget {
   final List<AccessoryTypeEntity> accessoriesType;
@@ -37,7 +38,7 @@ class ListDeviceType extends StatelessWidget {
         dropdownMenuEntries: accessoriesType.map<DropdownMenuEntry<int>>((AccessoryTypeEntity field) {
           return DropdownMenuEntry<int>(
             value: field.id!,
-            label: field.nameVi!,
+            label: field.getLocalizedName(context),
             style: ButtonStyle(textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodyMedium)),
           );
         }).toList(),

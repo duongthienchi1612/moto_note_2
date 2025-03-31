@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../base/base_widget.dart';
 
 class HomeAppbarSkeleton extends BaseStatelessWidget {
-  HomeAppbarSkeleton({
+  const HomeAppbarSkeleton({
     super.key,
   });
 
@@ -29,7 +29,7 @@ class HomeAppbarSkeleton extends BaseStatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                localizations.currentKm,
+                localizations(context).currentKm,
                 style: theme.textTheme.titleMedium!.copyWith(color: Colors.white),
               ),
               Text(
