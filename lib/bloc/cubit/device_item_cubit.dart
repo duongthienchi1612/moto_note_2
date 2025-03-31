@@ -1,6 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
-
 import '../../constants.dart';
 
 part 'device_item_state.dart';

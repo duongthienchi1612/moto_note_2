@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
+
 import 'business/master_data_business.dart';
 import 'constants.dart';
 import 'dependencies.dart';
@@ -14,7 +16,6 @@ import 'utilities/app_configuration.dart';
 import 'utilities/database_factory.dart';
 import 'utilities/localization_helper.dart';
 import 'utilities/static_var.dart';
-import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

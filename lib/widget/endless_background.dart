@@ -74,7 +74,7 @@ class EndlessBackground extends FlameGame with TapDetector {
   Future<SpriteAnimation> _loadSpriteAnimation(String prefix, int frameCount, {double stepTime = 0.1}) async {
     final frames = <Sprite>[];
     for (int i = 0; i < frameCount; i++) {
-      final fileName = '${prefix}${i.toString()}.png';
+      final fileName = '$prefix${i.toString()}.png';
       frames.add(await loadSprite(fileName));
     }
     return SpriteAnimation.spriteList(frames, stepTime: stepTime);

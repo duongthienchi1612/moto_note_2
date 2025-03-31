@@ -1,8 +1,6 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../constants.dart';
 import '../model/user_entity.dart';
 import '../theme/app_colors.dart';
 import 'account_tile.dart';
@@ -17,7 +15,7 @@ class SideMenu extends StatefulWidget {
   final Function(String userId) onSwitchAccount;
   final Function(String userId) onDeletedAccount;
   final Function(String)? changeLanguage;
-  
+
   const SideMenu(
     this.user, {
     super.key,
@@ -40,7 +38,7 @@ class _SideMenuState extends BaseState<SideMenu> {
     final screenSize = MediaQuery.of(context).size;
     final maxWidth = screenSize.width * 0.85; // Giới hạn width tối đa 85% màn hình
     final menuWidth = maxWidth < 288.0 ? maxWidth : 288.0;
-    
+
     return Scaffold(
       body: Container(
         width: menuWidth,
@@ -68,8 +66,7 @@ class _SideMenuState extends BaseState<SideMenu> {
                         ),
                       ),
                     ),
-                    if (widget.changeLanguage != null)
-                      _buildLanguageIcon(),
+                    if (widget.changeLanguage != null) _buildLanguageIcon(),
                   ],
                 ),
                 SizedBox(height: 24),
@@ -188,10 +185,8 @@ class _SideMenuState extends BaseState<SideMenu> {
   }
 
   Widget _buildAccountList() {
-    final otherUsers = widget.users
-        .where((account) => account.userName != widget.user.userName)
-        .toList();
-        
+    final otherUsers = widget.users.where((account) => account.userName != widget.user.userName).toList();
+
     return Flexible(
       child: otherUsers.isEmpty
           ? Center(

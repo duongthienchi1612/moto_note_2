@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
 import 'home_screen.dart';
-import 'preference/user_reference.dart';
 import 'splash_screen.dart';
 import 'theme/app_text_theme.dart';
 import 'utilities/localization_helper.dart';
@@ -16,7 +15,7 @@ Future<void> main() async {
   
   // Đọc ngôn ngữ từ SharedPreferences trực tiếp
   final prefs = await SharedPreferences.getInstance();
-  final currentUserId = await prefs.getString(PreferenceKey.currentUserId);
+  final currentUserId = prefs.getString(PreferenceKey.currentUserId);
   final languageKey = '${currentUserId}_${PreferenceKey.language}';
   final initialLanguage = prefs.getString(languageKey) ?? 'vi';
   
@@ -40,14 +39,14 @@ class _MyAppState extends State<MyApp> {
     _locale = Locale(widget.initialLanguage);
   }
 
-  void _changeLanguage(String languageCode) async {
+  Future<void> _changeLanguage(String languageCode) async {
     setState(() {
       _locale = Locale(languageCode);
     });
     
     // Lưu ngôn ngữ mới vào SharedPreferences trực tiếp
     final prefs = await SharedPreferences.getInstance();
-    final currentUserId = await prefs.getString(PreferenceKey.currentUserId);
+    final currentUserId = prefs.getString(PreferenceKey.currentUserId);
     final languageKey = '${currentUserId}_${PreferenceKey.language}';
     await prefs.setString(languageKey, languageCode);
   }

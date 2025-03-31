@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../dependencies.dart';
 import '../../preference/user_reference.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 abstract class BaseStatelessWidget extends StatelessWidget {
   const BaseStatelessWidget({super.key});

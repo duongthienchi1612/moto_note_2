@@ -156,10 +156,10 @@ class _AccountTileState extends BaseState<AccountTile> {
     );
   }
 
-  void _onEdit() async {
+  Future<void> _onEdit() async {
     final value = await showDialog(
       context: context,
-      builder: (_) => AddUserForm(userName: widget.user.userName ?? '', isAddNew: false),
+      builder: (_) => AddUserForm(userName: widget.user.userName ?? ''),
     );
     if (value != null) {
       widget.onEditAccount(widget.user.id!, value);

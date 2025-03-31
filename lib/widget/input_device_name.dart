@@ -2,7 +2,6 @@ import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../model/master_data/accessory_entity.dart';
-import '../utilities/localization_helper.dart';
 import 'base/base_widget.dart';
 
 class InputDeviceName extends StatefulWidget {

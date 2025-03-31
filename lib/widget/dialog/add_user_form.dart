@@ -7,7 +7,7 @@ import '../custom_text_field.dart';
 class AddUserForm extends StatefulWidget {
   final String? userName;
   final bool? isAddNew;
-  AddUserForm({super.key, required this.userName, this.isAddNew = false});
+  const AddUserForm({super.key, required this.userName, this.isAddNew = false});
 
   @override
   State<AddUserForm> createState() => _AddUserFormState();

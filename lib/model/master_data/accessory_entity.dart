@@ -51,7 +51,7 @@ class AccessoryEntity extends CoreReadEntity {
 // Extension cho AccessoryEntity
 extension AccessoryEntityExtension on AccessoryEntity {
   String getLocalizedName(BuildContext context) {
-    String languageCode = LocalizationHelper.getCurrentLanguageCode(context);
+    final String languageCode = LocalizationHelper.getCurrentLanguageCode(context);
     if (languageCode == 'vi') {
       return nameVi ?? '';
     } else {

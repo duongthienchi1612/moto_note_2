@@ -2,7 +2,6 @@ import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../bloc/add_device_bloc/add_device_bloc.dart';
 import '../../dependencies.dart';
 import '../base/base_widget.dart';

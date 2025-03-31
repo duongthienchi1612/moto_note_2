@@ -96,7 +96,7 @@ class _SortFormState extends BaseState<SortForm> {
                     elevation: WidgetStatePropertyAll(6)),
                 onSelected: (String? value) {
                   setState(() {
-                    fieldValue = value!;
+                    fieldValue = value;
                   });
                 },
                 leadingIcon: Icon(Icons.text_fields, size: 24),
@@ -131,7 +131,7 @@ class _SortFormState extends BaseState<SortForm> {
                     elevation: WidgetStatePropertyAll(6)),
                 onSelected: (String? value) {
                   setState(() {
-                    optionValue = value!;
+                    optionValue = value;
                   });
                 },
                 leadingIcon: Icon(Icons.sort_by_alpha, size: 24),
