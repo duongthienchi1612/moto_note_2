@@ -17,8 +17,18 @@ Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
   final currentUserId = prefs.getString(PreferenceKey.currentUserId);
   final languageKey = '${currentUserId}_${PreferenceKey.language}';
-  final initialLanguage = prefs.getString(languageKey) ?? 'vi';
-  
+  String? initialLanguage = prefs.getString(languageKey);
+
+  if (initialLanguage == null) {
+    // Lấy ngôn ngữ hệ thống
+    final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+    final systemLanguage = systemLocale.languageCode;
+
+    // Kiểm tra xem ngôn ngữ hệ thống có được hỗ trợ không
+    final supportedLanguages = ['en', 'vi']; // Thêm các ngôn ngữ được hỗ trợ
+    initialLanguage = supportedLanguages.contains(systemLanguage) ? systemLanguage : 'en';
+  }
+
   runApp(MyApp(initialLanguage: initialLanguage));
 }
 
@@ -43,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _locale = Locale(languageCode);
     });
-    
+
     // Lưu ngôn ngữ mới vào SharedPreferences trực tiếp
     final prefs = await SharedPreferences.getInstance();
     final currentUserId = prefs.getString(PreferenceKey.currentUserId);
